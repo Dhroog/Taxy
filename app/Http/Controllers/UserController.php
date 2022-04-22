@@ -40,7 +40,7 @@ class UserController extends Controller
 
             if(Hash::check($request->password, $user->password)){
 
-                //find ability
+                //store abilities this user in array
                 $abilitys = $user->role;
                 $arry = array();
                 foreach ($abilitys as $ability)
