@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum','verified'])->get('/user', function (Request $request) {
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -30,20 +30,11 @@ Route::post("login", [AuthController::class, "login"]);
 Route::post("register", [AuthController::class, "register"]);
 
 
+Route::group(["prefix" => "", "middleware" => ["auth:sanctum", "ActiveAccount"]], function () {
 
-
-
-Route::group(["prefix"=> "" ,"middleware" => ["auth:sanctum"]], function(){
-
-    Route::get("logout", [UserController::class, "logout"]);
+    Route::get("logout", [AuthController::class, "logout"]);
     Route::get("profile", [UserController::class, "profile"]);
-    Route::get('role', [UserController::class,'role']);
+    Route::get('role', [UserController::class, 'role']);
     Route::post("verifyemail", [AuthController::class, "verifyemail"]);
-
-  //  Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
-   // Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['auth','signed'])->name('verification.verify');
-
-    Route::get("test", [UserController::class, "test"]);
-
 });
 

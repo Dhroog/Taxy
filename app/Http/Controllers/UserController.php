@@ -140,26 +140,5 @@ class UserController extends Controller
 
     }
 
-    public function test(Request $request): JsonResponse
-    {
-        /**
-         * @OA\Get (
-         * path="/test",
-         * summary="test",
-         * description="test",
-         * operationId="test",
-         * tags={"auth"},
 
-         * @OA\Response(
-         *    response=422,
-         *    description="Wrong credentials response",
-         *    @OA\JsonContent(
-         *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-         *        )
-         *     )
-         * )
-         */
-        mail::to($request->user())->send(new VerfyEmail(uniqid()));
-        return Response()->json(true);
-    }
 }
