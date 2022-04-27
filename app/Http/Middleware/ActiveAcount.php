@@ -16,9 +16,9 @@ class ActiveAcount
      */
     public function handle(Request $request, Closure $next)
     {
-        if( !auth()->user()->status )
+        if( !$request->user()->status )
         {
-            return response()->json('Access Denied',400);
+            return response()->json('Access Denied',501);
         }
         return $next($request);
     }

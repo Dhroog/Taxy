@@ -136,34 +136,6 @@
                     }
                 }
             }
-        },
-        "/test": {
-            "get": {
-                "tags": [
-                    "auth"
-                ],
-                "summary": "test",
-                "description": "test",
-                "operationId": "test",
-                "responses": {
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Sorry, wrong email address or password. Please try again"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     },
     "security": [

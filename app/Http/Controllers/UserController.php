@@ -6,6 +6,8 @@ use App\Mail\VerfyEmail;
 use App\Models\Code;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
+use http\Env\Response;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -42,7 +44,7 @@ class UserController extends Controller
 
     public function role(): JsonResponse
     {
-
+return response()->json(auth()->user()->status);
         $user = User::find(1);
         $a = array();
         $abilitys = $user->role;
@@ -117,7 +119,7 @@ class UserController extends Controller
 
         //$user->code->create(['code'=> uniqid(),'user_id'=>$user->id]);
         $code = new Code();
-        $code->code = uniqid();
+        $code->code = random_int(100000,999999);
         $code->user_id = $user->id;
         $code->save();
 
@@ -134,11 +136,42 @@ class UserController extends Controller
     }
 
     // PROFILE API
-    public function profile()
-    {
+    public function profile(): JsonResponse
+    {//return Response()->json("hello");
         return $this->returnData(200,'User Profile information','data',auth()->user());
 
     }
+    // GET ALL USER
+    public function AllUsers(): JsonResponse
+    {
+        $users = User::all();
+        return $this->returnData(200,"get all users",'data',$users);
+    }
+    //GET USER BY ID
+    public function GetUserById($id): JsonResponse
+    {
+        $user = User::find($id);
+        if( isset($user) )
+        {
+            return $this->returnData(200,'get user','data',$user);
+        }
+        else{
+            return $this->returnError(501,'user not found');
+        }
+    }
 
-
+    //test
+    public function test()
+    {
+        //return response()->json();
+        //return response()->json(random_int(100000,999999));
+        $a = Carbon::now()->toDateTimeString();
+        $b = Carbon::tomorrow()->toDateTimeString();
+       // $b->greaterThan($a);
+        return response()->json([
+            'a'=>$a,
+            'b'=>$b,
+           //'a-b'=>$b-$a
+        ]);
+    }
 }

@@ -19,6 +19,7 @@ class AuthController extends Controller
 {
     use GeneralTrait;
 
+
     // REGISTER API
     public function register(Request $request): JsonResponse
     {
@@ -67,72 +68,73 @@ class AuthController extends Controller
         $user->save();
 
         $code = new Code();
-        $code->code = uniqid();
+        $code->code = random_int(100000,999999);
         $code->user_id = $user->id;
         $code->save();
 
         mail::to($user)->send(new VerfyEmail($code->code));
 
         // send response
-        return $this->returnSuccessMessage(200,'Success register we send a code to your email ');
+        return $this->returnSuccessMessage(200, 'Success register we send a code to your email ');
     }
 
-    // LOGIN API
+
+    /**
+     * @param Request $request jhdsaj
+     * @return JsonResponse saed
+     */
     public function login(Request $request): JsonResponse
     {
-
         // validation
         $request->validate([
+
             "email" => "required|email",
             "password" => "required"
         ]);
 
         // check user
         $user = User::where("email", "=", $request->email)->first();
-        if(isset($user->id)){
+        if (isset($user->id)) {
 
-            if(Hash::check($request->password, $user->password)){
+            if (Hash::check($request->password, $user->password)) {
 
                 //store abilities this user in array
                 $abilitys = $user->role;
                 $arry = array();
-                foreach ($abilitys as $ability)
-                {
-                    array_push($arry,$ability->name);
+                foreach ($abilitys as $ability) {
+                    array_push($arry, $ability->name);
                 }
                 // create a token
-                $token = $user->createToken("auth_token",$arry)->plainTextToken;
+                $token = $user->createToken("auth_token", $arry)->plainTextToken;
 
                 /// send a response
-                return $this->returnData(200,'logged in successfully','access_token',$token);
+                return $this->returnData(200, 'logged in successfully', 'access_token', $token);
 
-            }else{
+            } else {
 
-                return $this->returnError(500,"Password didn't match");
+                return $this->returnError(400, "Password didn't match");
             }
-        }else{
+        } else {
 
-            return $this->returnError(500,"User not found");
+            return $this->returnError(400, "User not found");
 
         }
     }
 
     //verifyemail
-    public function verifyemail(Request $request)
+    public function VerifyEmail(Request $request)
     {
         // validation
         $request->validate([
-            "code" => "required|string",
+            "code" => "required|int",
         ]);
-        if( !strcmp(auth()->user()->code->code,$request->code) )
-        {
+
+        if ( auth()->user()->code->code == $request->code ) {
             $user = auth()->user();
             $user->status = true;
             $user->save();
-            return $this->returnSuccessMessage(200,'Success verifyemail ');
-        }else return $this->returnError(501,'code not correct');
-
-
+            return $this->returnSuccessMessage(200, 'Success verifyemail ');
+        } else return $this->returnError(501, 'code not correct');
 
 
     }
@@ -143,8 +145,18 @@ class AuthController extends Controller
 
         auth()->user()->tokens()->delete();
 
-        return $this->returnSuccessMessage(200,'logged out successfully');
+        return $this->returnSuccessMessage(200, 'logged out successfully');
     }
 
+    //resend code
+    public function ReSendCode()
+    {
+        $code = auth()->user()->code;
+        $code->code = random_int(100000,999999);
+        $code->save();
+
+        $this->returnData(200,"sucssec",'data',$code->code);
+
+    }
 
 }
