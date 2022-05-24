@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,21 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('Images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+            $table->foreign("user_id")->references('id')->on('users')->onDelete('cascade');
+
         });
-
-        DB::table('roles')->insert([
-            ['name' => 'admin'],
-            ['name' => 'driver'],
-            ['name' => 'customer']
-        ]);
-
     }
-
-
 
     /**
      * Reverse the migrations.
@@ -37,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('Images');
     }
 };

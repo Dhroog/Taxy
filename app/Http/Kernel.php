@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'Abilities'=>\App\Http\Middleware\CheckAbilities::class,
         'AnyAbility'=>\App\Http\Middleware\CheckForAnyAbility::class,
         'ActiveAccount'=>\App\Http\Middleware\ActiveAcount::class,
+        'Headers'=>\App\Http\Middleware\HeadersApi::class,
     ];
 }

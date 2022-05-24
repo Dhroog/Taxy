@@ -13,30 +13,27 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('role_user', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('role_id');
+            $table->string('surname');
+            $table->integer('age');
+            $table->boolean('available')->default(false);
+            $table->double('lat')->default(0);
+            $table->double('long')->default(0);
             $table->timestamps();
-            $table->unique(['user_id','role_id']);
             $table->foreign("user_id")->references('id')->on('users')->onDelete('cascade');
-            $table->foreign("role_id")->references('id')->on('roles')->onDelete('cascade');
         });
 
-        DB::table('role_user')->insert([
+        DB::table('drivers')->insert([
             [
-                'user_id' => 1,
-                'role_id' => 1,
-            ],
-            [
-                'user_id' => 2,
-                'role_id' => 2,
-            ],
-            [
-                'user_id' => 3,
-                'role_id' => 3,
+                'user_id'=> 2,
+                'surname'=> 'driver',
+                'age' => 29,
+                'available'=>false,
+                'lat' => random_int(100,100000),
+                'long' => random_int(100,100000),
             ]
-
         ]);
     }
 
@@ -47,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('drivers');
     }
 };

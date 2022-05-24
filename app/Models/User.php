@@ -54,4 +54,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Code::class);
     }
+
+    public function image()
+    {
+        return $this->hasOne(image::class);
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
 }

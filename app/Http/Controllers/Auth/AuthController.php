@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\rr;
 use App\Mail\VerfyEmail;
 use App\Models\Code;
+use App\Models\Role_User;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -23,38 +26,11 @@ class AuthController extends Controller
     // REGISTER API
     public function register(Request $request): JsonResponse
     {
-        /**
-         * @OA\Post  (
-         * path="/register",
-         * summary="signup",
-         * description="signup by email, password",
-         * operationId="authRegister",
-         * tags={"auth"},
-         * @OA\RequestBody(
-         *    required=true,
-         *    description="Pass user credentials",
-         *    @OA\JsonContent(
-         *       required={ "name","email","password"},
-         *       @OA\Property(property="name", type="string", format="name", example="user1"),
-         *       @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
-         *       @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
-         *       @OA\Property(property="password_confirmation", type="string", format="password_confirmation", example="PassWord12345"),
-         *
-         *    ),
-         * ),
-         * @OA\Response(
-         *    response=422,
-         *    description="Wrong credentials response",
-         *    @OA\JsonContent(
-         *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-         *        )
-         *     )
-         * )
-         */
+
         // validation
         $request->validate([
             "name" => "required",
-            "email" => "required|email|unique:users",
+            "phone" => "required|size:10|unique:users",
             "password" => "required|confirmed"
         ]);
 
@@ -62,7 +38,7 @@ class AuthController extends Controller
         $user = new User();
 
         $user->name = $request->name;
-        $user->email = $request->email;
+        $user->phone = $request->phone;
         $user->status = false;
         $user->password = Hash::make($request->password);
         $user->save();
@@ -72,28 +48,28 @@ class AuthController extends Controller
         $code->user_id = $user->id;
         $code->save();
 
-        mail::to($user)->send(new VerfyEmail($code->code));
+        $role = new Role_User();
+        $role->user_id = $user->id;
+        $role->role_id = 3;
+        $role->save();
+
+
 
         // send response
-        return $this->returnSuccessMessage(200, 'Success register we send a code to your email ');
+        return $this->returnSuccessMessage('Success');
     }
-
-
-    /**
-     * @param Request $request jhdsaj
-     * @return JsonResponse saed
-     */
+   // LOGIN
     public function login(Request $request): JsonResponse
     {
         // validation
         $request->validate([
 
-            "email" => "required|email",
+            "phone" => "required|size:10",
             "password" => "required"
         ]);
 
         // check user
-        $user = User::where("email", "=", $request->email)->first();
+        $user = User::where("phone", "=", $request->phone)->first();
         if (isset($user->id)) {
 
             if (Hash::check($request->password, $user->password)) {
@@ -108,21 +84,20 @@ class AuthController extends Controller
                 $token = $user->createToken("auth_token", $arry)->plainTextToken;
 
                 /// send a response
-                return $this->returnData(200, 'logged in successfully', 'access_token', $token);
+                return $this->returnData('logged in successfully', $token , 'access_token' );
 
             } else {
 
-                return $this->returnError(400, "Password didn't match");
+                return $this->returnError( "Something went wrong");
             }
         } else {
 
-            return $this->returnError(400, "User not found");
+            return $this->returnError( "Something went wrong");
 
         }
     }
-
-    //verifyemail
-    public function VerifyEmail(Request $request)
+    //verified
+    public function VerifyPhone(Request $request)
     {
         // validation
         $request->validate([
@@ -133,30 +108,107 @@ class AuthController extends Controller
             $user = auth()->user();
             $user->status = true;
             $user->save();
-            return $this->returnSuccessMessage(200, 'Success verifyemail ');
-        } else return $this->returnError(501, 'code not correct');
+            return $this->returnSuccessMessage( 'Success verifyPhone ');
+        } else return $this->returnError( 'code not correct');
 
 
     }
-
     // LOGOUT API
     public function logout(): JsonResponse
     {
 
-        auth()->user()->tokens()->delete();
+        //auth()->user()->tokens()->delete();
+        $user = auth()->user();
+        $user->tokens()->delete();
+        $user->fcm_token = null;
+        $user->save();
 
-        return $this->returnSuccessMessage(200, 'logged out successfully');
+        return $this->returnSuccessMessage( 'logged out successfully');
     }
-
     //resend code
     public function ReSendCode()
     {
         $code = auth()->user()->code;
-        $code->code = random_int(100000,999999);
-        $code->save();
 
-        $this->returnData(200,"sucssec",'data',$code->code);
+        $time_now = Carbon::instance(Carbon::now());
+        $time_updated = Carbon::instance($code->updated_at);
+        $time_created = Carbon::instance($code->created_at);
+
+        if( $time_now->diffInMinutes($time_updated) >= 0 || $time_now->diffInMinutes($time_created) <= 2 )
+        {
+            $code->code = random_int(100000,999999);
+            $code->save();
+            if($this->sendnotification(auth()->user()->fcm_token,'Code Verification',$code->code,''))
+            return $this->returnSuccessMessage("Success");
+            else return $this->returnError("fail send notification");
+        }else return $this->returnData("can't send code now",2-$time_updated->diffInMinutes($time_now), 501);
+
 
     }
+    ///ForgetPassword
+    public function ForgetPassword(Request $request)
+    {
+        // validation
+        $request->validate([
+            "phone" => "required|size:10",
+        ]);
+
+        $user = User::where( "phone", "=", $request->phone )->first();
+        if( isset($user->id) )
+        {
+            $code = $user->code;
+            $time_now = Carbon::instance(Carbon::now());
+            $time_updated = Carbon::instance($code->updated_at);
+
+            if($time_now->diffInMinutes($time_updated) >= 2)
+            {
+                $code->code = random_int(100000,999999);
+                $code->save();
+                if( $this->sendnotification($user->fcm_token,'Code Verification',$code->code,'') )
+                return $this->returnSuccessMessage("we send code to your phone");
+                else return $this->returnError("fail send notification");
+            }else return $this->returnData("can't send code now",2-$time_updated->diffInMinutes($time_now),501);
+
+        }else return $this->returnError('something went wrong with phone ');
+    }
+    ///ResetPassword
+    public function ResetPassword(Request $request)
+    {
+        // validation
+        $request->validate([
+            "phone" => "required|size:10",
+            "code" => "required|int",
+            "password" => "required|confirmed"
+        ]);
+
+         $user = User::where( "phone", "=", $request->phone )->first();
+        if (isset($user->id))
+        {
+            if( $user->code->code == $request->code )
+            {
+                $user->password = Hash::make($request->password);
+                $user->save();
+                return $this->returnSuccessMessage('success change password');
+            } else return $this->returnError(' wrong code ');
+        }else return $this->returnError('wrong phone');
+    }
+
+    //InsertTokenFireBase
+    public function InsertTokenFireBase(Request $request)
+    {
+        ///validation
+        $request->validate([
+            "fcm_token" => "required|string",
+        ]);
+
+        $user = auth()->user();
+        if( isset($user) )
+        {
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
+            return $this->returnSuccessMessage('Success');
+        }else return $this->returnError('something went wrong');
+    }
+
 
 }

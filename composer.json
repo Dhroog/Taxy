@@ -11,7 +11,9 @@
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "nesbot/carbon": "^2.57"
+        "nesbot/carbon": "^2.57",
+      "ext-http": "*",
+      "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
