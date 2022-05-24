@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Jobapplication extends Model
+class Updatedriverinfoapplication extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name','surname','age','phone','carmodel','carcolor','carnumber','status'];
+    protected $fillable = ['name','surname','age'];
 }

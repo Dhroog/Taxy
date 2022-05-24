@@ -82,12 +82,12 @@ class UserController extends Controller
         {
                 $user->name = $request->name;
                 $user->save();
-                return $this->returnSuccessMessage('success');
+                return $this->returnSuccessMessage();
         }else return $this->returnError('something went wrong');
 
     }
     //Upload image
-    public function uploadImage(Request $request)
+    public function UploadImage(Request $request): JsonResponse
     {
 
         $validatedData = $request->validate([
@@ -97,24 +97,34 @@ class UserController extends Controller
         $imageName = time().'.'.$request->image->extension();
         $request->image->move(public_path('Images/User'), $imageName);
 
-        $save = new Image;
-        $save->user_id = auth()->user()->id;
-        $save->name = $imageName;
-        $save->save();
-        return $this->returnSuccessMessage(200,'Success');
+        $image = new Image;
+        $image->user_id = auth()->user()->id;
+        $image->name = $imageName;
+        $image->save();
+        return $this->returnSuccessMessage();
     }
     //get Image
-    public function  getImage()
+    public function  GetImageById($id): \Symfony\Component\HttpFoundation\BinaryFileResponse|JsonResponse
     {
-        $image = auth()->user()->image->name;
-        $myFile = public_path("Images/User".$image);
-        return response()->download($myFile);
+        $user = User::find($id);
+        if( isset($user) )
+        {
+            $image = $user->image;
+            if(isset($image))
+            {
+
+                $myFile = public_path("Images/User".$image->name);
+                return response()->download($myFile);
+            }else return $this->returnError('image not found');
+
+        }else return  $this->returnError('user not found');
+
     }
     //test
-    public function test($test)
+    public function test($id): JsonResponse
     {
 
-        return $this->returnData("Success",$test);
+        return $this->returnData("Success",$id);
     }
 }
 

@@ -6,8 +6,10 @@ use App\Models\Code;
 use App\Models\Driver;
 use App\Models\Jobapplication;
 use App\Models\Role_User;
+use App\Models\Updatedriverinfoapplication;
 use App\Models\User;
 use App\Traits\GeneralTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,40 +26,43 @@ class DriverController extends Controller
         return $this->returnData("get all driver",$users);
     }
 
-    public function DriverJobApplication(Request $request)
+    public function DriverJobApplication(Request $request): JsonResponse
     {
         $request->validate([
-            "name" => "required|regex:/^[a-zA-ZÑñ\s]+$/",
             "surname" => "required|regex:/^[a-zA-ZÑñ\s]+$/",
-            "age" => "required",
-            "phone" => "required|size:10|unique:users|unique:jobapplications",
+            "age" => "required|int",
             "carmodel" => "string",
             "carcolor" => "string",
             "carnumber" => "string|size:8|unique:jobapplications"
         ]);
 
-        // create data
-        $jobApplication = new Jobapplication();
-        $jobApplication->name = $request->name;
-        $jobApplication->surname = $request->surname;
-        $jobApplication->age = $request->age;
-        $jobApplication->phone = $request->phone;
-        $jobApplication->carmodel = $request->carmodel;
-        $jobApplication->carcolor = $request->carcolor;
-        $jobApplication->carnumber = $request->carnumber;
-        $jobApplication->save();
+        $user = auth()->user();
+        if( isset($user) )
+        {
+            // create data
+            $jobApplication = new Jobapplication();
+            $jobApplication->user_id = $user->id;
+            $jobApplication->surname = $request->surname;
+            $jobApplication->age = $request->age;
+            $jobApplication->carmodel = $request->carmodel;
+            $jobApplication->carcolor = $request->carcolor;
+            $jobApplication->carnumber = $request->carnumber;
+            $jobApplication->save();
 
-        return $this->returnSuccessMessage('Success');
+            return $this->returnSuccessMessage();
+        }else return $this->returnError();
+
+
 
     }
 
-    public function AllJobApplication()
+    public function AllJobApplication(): JsonResponse
     {
         $jobapplication = Jobapplication::paginate(15);
-        return $this->returnData(200,'Success','data',$jobapplication);
+        return $this->returnData("All JobApplication",$jobapplication);
     }
 
-    public function GetStatusDriverJobApplication($id)
+    public function GetStatusDriverJobApplication($id): JsonResponse
     {
         $DriverJobApplication = Jobapplication::find($id);
         if(isset($DriverJobApplication))
@@ -66,7 +71,7 @@ class DriverController extends Controller
         }else return $this->returnError("JobApplication not found");
     }
 
-    public function AcceptOrRejectDriverJobApplication(Request $request)
+    public function AcceptOrRejectDriverJobApplication(Request $request): JsonResponse
     {
         $request->validate([
             'AcceptOrReject'=>'boolean|required',
@@ -74,23 +79,20 @@ class DriverController extends Controller
         ]);
 
         $DriverJobApplication = Jobapplication::find($request->id);
-        if( $DriverJobApplication->status == "waiting" )
+        if( isset($DriverJobApplication) )
         {
-            if(isset($DriverJobApplication))
+            if( $DriverJobApplication->status == "waiting" )
             {
+                $user = User::find( $DriverJobApplication->user_id );
                 if( $request->AcceptOrReject )
                 {
-                    //////////Here Accept Aapplaction
-                    $password = Str::random(8);
+                    //////////Here Accept Application
 
-                    ////Create user
-                    $user = new User();
-                    $user->name = $DriverJobApplication->name;
-                    $user->phone = $DriverJobApplication->phone;
-                    $user->password = Hash::make($password);
-                    $user->status = true;
+
+                    ////Update user
                     $user->type = "driver";
                     $user->save();
+
 
                     ////Create driver
                     $driver = new Driver();
@@ -105,17 +107,11 @@ class DriverController extends Controller
                     $role->role_id = 2;
                     $role->save();
 
-                    ////Create code
-                    $code = new Code();
-                    $code->user_id = $user->id;
-                    $code->code = random_int(100000,999999);
-                    $code->save();
-
                     ////update status DriverJobApplication
                     $DriverJobApplication->status = "accept";
                     $DriverJobApplication->save();
 
-                    $this->sendnotification("cw7BskxnSZKu1UAQd6hIIh:APA91bE74j1vRVX5uuRDBoeRzFhFqWB5Ep8WH_8ZzcDYSPfnNQ5wYyGaiTm8k9cKbWm5gcLcOfV7ruyun02EWcpvxaDgW0ci0iC1AXRHfcLrN7CrWyE3muGj4Pv5XkE9P7Vh_l-5DXQB","Accept your Application","your password is : ".$password);
+                    $this->sendnotification($user->fcm_token,"Accept your Application","Welcome! we are delighted you've decided to join our company. we are confident that you will bring fresh insights and great work to our team. ");
                     return $this->returnSuccessMessage();
 
 
@@ -124,13 +120,35 @@ class DriverController extends Controller
                     $DriverJobApplication->status = "reject";
                     $DriverJobApplication->save();
 
-                    $this->sendnotification("cw7BskxnSZKu1UAQd6hIIh:APA91bE74j1vRVX5uuRDBoeRzFhFqWB5Ep8WH_8ZzcDYSPfnNQ5wYyGaiTm8k9cKbWm5gcLcOfV7ruyun02EWcpvxaDgW0ci0iC1AXRHfcLrN7CrWyE3muGj4Pv5XkE9P7Vh_l-5DXQB","Reject your Application","you can see reasons rejection in app");
+                    $this->sendnotification($user->fcm_token,"Reject your Application","you can see reasons rejection in app");
                     return $this->returnSuccessMessage();
 
                 }
-            }else return $this->returnError("JobApplication not found");
-        }else return $this->returnError();
+            }else return $this->returnError();
+        }else return $this->returnError("JobApplication not found");
 
 
+    }
+
+    public function UpdateDriverInfoApplication(Request $request)
+    {
+        $request->validate([
+            'name'=> "required|regex:/^[a-zA-ZÑñ\s]+$/",
+            'surname'=> "required|regex:/^[a-zA-ZÑñ\s]+$/",
+            "age" => "required|int",
+        ]);
+
+        $driver = auth()->user()->driver;
+        if(isset($driver))
+        {
+            $info = new Updatedriverinfoapplication();
+            $info->driver_id = $driver->id;
+            $info->name = $request->name;
+            $info->surname = $request->surname;
+            $info->age = $request->age;
+            $info->save();
+            return $this->returnSuccessMessage();
+
+        }else return $this->returnError("driver not found");
     }
 }

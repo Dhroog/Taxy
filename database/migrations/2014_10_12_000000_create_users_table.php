@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('fcm_token')->nullable();
             $table->enum('type',['driver','admin','customer'])->default('customer');
+            $table->softDeletes();
             $table->timestamps();
         });
 
