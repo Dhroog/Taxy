@@ -68,5 +68,8 @@ class Kernel extends HttpKernel
         'AnyAbility'=>\App\Http\Middleware\CheckForAnyAbility::class,
         'ActiveAccount'=>\App\Http\Middleware\ActiveAcount::class,
         'Headers'=>\App\Http\Middleware\HeadersApi::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 }

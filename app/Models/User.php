@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable,SoftDeletes,HasRoles;
+
+    protected $guard_name = 'sanctum';
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'status',
+        'image'
     ];
 
     /**
@@ -46,27 +50,22 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     //////////relationships///////////////
-    public function role()
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
 
-    public function code()
+    public function code(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Code::class);
     }
 
-    public function image()
-    {
-        return $this->hasOne(image::class);
-    }
-
-    public function driver()
+    public function driver(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Driver::class);
     }
 
-    public function jobapplication()
+    public function jobapplication(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Jobapplication::class);
     }

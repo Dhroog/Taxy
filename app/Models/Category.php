@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class image extends Model
+class Category extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name','user_id'];
-
-    public function user()
+    protected $fillable = ['name','description','cost'];
+    ///////////////////relation
+    public function car()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Car::class,'category_id');
     }
 }

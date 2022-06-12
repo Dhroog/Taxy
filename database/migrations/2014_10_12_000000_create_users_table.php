@@ -19,36 +19,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->boolean('status');
+            $table->string('image')->nullable();;
             $table->string('password');
             $table->string('fcm_token')->nullable();
-            $table->enum('type',['driver','admin','customer'])->default('customer');
+            $table->enum('type',['driver','admin','customer'])->default('customer')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
 
-        DB::table('users')->insert([
-            [
-                'name' => 'admin',
-                'phone' => '0998789856',
-                'status' => true,
-                'password' => Hash::make('admin'),
-                'type' => 'admin'
-            ],
-            [
-                'name' => 'driver',
-                'phone' => '0998789851',
-                'status' => true,
-                'password' => Hash::make('driver'),
-                'type' => 'driver'
-            ],
-            [
-                'name' => 'customer',
-                'phone' => '0998789853',
-                'status' => true,
-                'password' => Hash::make('customer'),
-                'type' => 'customer'
-            ]
-        ]);
+
     }
 
     /**

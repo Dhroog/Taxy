@@ -10,5 +10,10 @@ class Updatedriverinfoapplication extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name','surname','age'];
+    protected $fillable = ['name','surname','age','carnumber','carcolor','carmodel','image_car','image_driver'];
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
 }

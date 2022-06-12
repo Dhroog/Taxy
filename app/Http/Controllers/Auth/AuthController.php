@@ -75,13 +75,15 @@ class AuthController extends Controller
             if (Hash::check($request->password, $user->password)) {
 
                 //store abilities this user in array
-                $abilitys = $user->role;
-                $arry = array();
-                foreach ($abilitys as $ability) {
-                    array_push($arry, $ability->name);
-                }
+                /*
+                    $abilitys = $user->role;
+                    $arry = array();
+                    foreach ($abilitys as $ability) {
+                        array_push($arry, $ability->name);
+                    }
+                */
                 // create a token
-                $token = $user->createToken("auth_token", $arry)->plainTextToken;
+                $token = $user->createToken("auth_token")->plainTextToken;
 
                 /// send a response
                 return $this->returnData('logged in successfully', $token , 'access_token' );
@@ -177,7 +179,7 @@ class AuthController extends Controller
         // validation
         $request->validate([
             "phone" => "required|size:10",
-            "code" => "required|int",
+            "code" => "required|int|size:6",
             "password" => "required|confirmed"
         ]);
 
@@ -192,7 +194,26 @@ class AuthController extends Controller
             } else return $this->returnError(' wrong code ');
         }else return $this->returnError('wrong phone');
     }
+    ///ChangePassword
+    public function ChangePassword(Request $request)
+    {
+        $request->validate([
+            "phone" => "required|size:10",
+            "old_password" => "required",
+            "new_password" => "required|confirmed"
+        ]);
 
+        $user = User::where( "phone", "=", $request->phone )->first();
+        if (isset($user->id))
+        {
+            if( Hash::check($request->old_password,$user->password)  )
+            {
+                $user->password = Hash::make($request->new_password);
+                $user->save();
+                return $this->returnSuccessMessage('success change password');
+            } else return $this->returnError(' wrong password ');
+        }else return $this->returnError('wrong phone');
+    }
     //InsertTokenFireBase
     public function InsertTokenFireBase(Request $request)
     {

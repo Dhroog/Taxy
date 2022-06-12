@@ -13,12 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('Images', function (Blueprint $table) {
+        Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('driver_id');
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->string('model');
+            $table->string('color');
+            $table->string('number');
+            $table->string('image');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign("user_id")->references('id')->on('users')->onDelete('cascade');
+            $table->foreign("driver_id")->references('id')->on('drivers')->onDelete('cascade');
 
         });
     }
@@ -30,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('Images');
+        Schema::dropIfExists('cars');
     }
 };

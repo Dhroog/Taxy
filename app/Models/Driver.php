@@ -22,4 +22,9 @@ class Driver extends Model
     {
         return $this->hasOne(Updatedriverinfoapplication::class);
     }
+
+    public function car()
+    {
+        return $this->hasOne(Car::class);
+    }
 }

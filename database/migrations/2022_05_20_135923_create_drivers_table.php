@@ -26,16 +26,7 @@ return new class extends Migration
             $table->foreign("user_id")->references('id')->on('users')->onDelete('cascade');
         });
 
-        DB::table('drivers')->insert([
-            [
-                'user_id'=> 2,
-                'surname'=> 'driver',
-                'age' => 29,
-                'available'=>false,
-                'lat' => random_int(100,100000),
-                'long' => random_int(100,100000),
-            ]
-        ]);
+
     }
 
     /**

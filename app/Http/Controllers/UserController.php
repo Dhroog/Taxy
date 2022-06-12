@@ -61,7 +61,8 @@ class UserController extends Controller
         $user = User::find($id);
         if( isset($user) )
         {
-            return $this->returnData('get user','data',$user);
+
+            return $this->returnData('get user',$user);
         }
         else{
             return $this->returnError('user not found');
@@ -69,7 +70,7 @@ class UserController extends Controller
     }
 
     ///UpdateProfile
-    public function Update(Request $request)
+    public function Update(Request $request): JsonResponse
     {
         // validation
         $request->validate([
@@ -97,10 +98,10 @@ class UserController extends Controller
         $imageName = time().'.'.$request->image->extension();
         $request->image->move(public_path('Images/User'), $imageName);
 
-        $image = new Image;
-        $image->user_id = auth()->user()->id;
-        $image->name = $imageName;
-        $image->save();
+        $user = auth()->user();
+        $user->image = $imageName;
+        $user->save();
+
         return $this->returnSuccessMessage();
     }
     //get Image
@@ -109,14 +110,11 @@ class UserController extends Controller
         $user = User::find($id);
         if( isset($user) )
         {
-            $image = $user->image;
-            if(isset($image))
+            if(isset($user->image))
             {
-
-                $myFile = public_path("Images/User".$image->name);
+                $myFile = public_path("Images/User/".$user->image);
                 return response()->download($myFile);
             }else return $this->returnError('image not found');
-
         }else return  $this->returnError('user not found');
 
     }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('carmodel');
             $table->string('carcolor');
             $table->string('carnumber');
+            $table->string('image');
             $table->enum('status',['accept','reject','waiting'])->default('waiting');
             $table->timestamps();
             $table->softDeletes();
