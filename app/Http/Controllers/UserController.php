@@ -121,7 +121,7 @@ class UserController extends Controller
     //test
     public function test(): JsonResponse
     {
-        $a = Carbon::now()->addMinutes(2);
+        $b = Carbon::now()->addMinutes(2);
 
         return $this->returnSuccessMessage();
     }
