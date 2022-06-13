@@ -48,10 +48,7 @@ class AuthController extends Controller
         $code->user_id = $user->id;
         $code->save();
 
-        $role = new Role_User();
-        $role->user_id = $user->id;
-        $role->role_id = 3;
-        $role->save();
+        $user->assignRole('Customer');
 
 
 
