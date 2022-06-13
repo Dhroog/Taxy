@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RolesPermissionController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 ////////////////////////////////////////////////All Api not Need AUTH///////////////////////////////////////////////////////////////////
 
-route::get('test/{id?}',[UserController::class,'test']);
+route::get('test/',[UserController::class,'test']);
 
     Route::post("register", [AuthController::class, "register"]);
     Route::post("login", [AuthController::class, "login"]);
@@ -88,6 +89,9 @@ Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAc
     Route::get("profile", [UserController::class, "profile"])->middleware("permission:Show-Profile");
     Route::put("UpdateProfile", [UserController::class, "Update"])->middleware("permission:Update-Profile");
     Route::post("DriverJobApplication", [DriverController::class, "DriverJobApplication"])->middleware("permission:Send-Job-Application");
+
+    Route::post("CreateTrip", [TripController::class, "CreateTrip"])->middleware("permission:Create-Trip");
+
 
 });
 

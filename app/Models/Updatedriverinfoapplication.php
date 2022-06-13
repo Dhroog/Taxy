@@ -12,8 +12,8 @@ class Updatedriverinfoapplication extends Model
 
     protected $fillable = ['name','surname','age','carnumber','carcolor','carmodel','image_car','image_driver'];
 
-    public function driver()
+    public function driver(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsTo(Driver::class);
+        return $this->belongsToMany(Driver::class);
     }
 }

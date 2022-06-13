@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
+use App\Models\Customer;
 use App\Models\Driver;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,6 +29,9 @@ class UserSeeder extends Seeder
                     $user->password = Hash::make('admin');
                     $user->status = true;
                     $user->save();
+                    $admin = new Admin();
+                    $admin->user_id = $user->id;
+                    $admin->save();
                 }
             );
         User::factory()->count(1)
@@ -52,6 +58,9 @@ class UserSeeder extends Seeder
                     $user->password = Hash::make('customer');
                     $user->status = true;
                     $user->save();
+                    $customer = new Customer();
+                    $customer->user_id = $user->id;
+                    $customer->save();
 
                 }
             );

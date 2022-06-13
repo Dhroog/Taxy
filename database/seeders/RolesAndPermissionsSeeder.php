@@ -53,6 +53,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $AddPermissionToUser = 'Add-Permission-To-User';
         $RemovePermissionFromUser = 'Remove-Permission-From-User';
         $ChangeRoleUser = 'Change-Role-User';
+        ///Manage Trips
+        $CreateTrip = 'Create-Trip';
+
 
 
 
@@ -82,6 +85,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $AddPermissionToUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $RemovePermissionFromUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChangeRoleUser]);
+        Permission::create(['guard_name' => 'sanctum','name' => $CreateTrip]);
 
 
         // Create Roles and Assign Created Permissions
@@ -94,8 +98,16 @@ class RolesAndPermissionsSeeder extends Seeder
 
 
         Role::create(['guard_name' => 'sanctum','name' => $SuperAdmin])->givePermissionTo(Permission::all());
-        Role::create(['guard_name' => 'sanctum','name' => $Customer])->givePermissionTo($ShowProfile,$UpdateProfile,$SendJobApplication);
-        Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo($SendUpdateDriverInfoApplication,$GetStatusDriverJobApplication);
+        Role::create(['guard_name' => 'sanctum','name' => $Customer])->givePermissionTo(
+            $ShowProfile,
+            $UpdateProfile,
+            $SendJobApplication,
+            $CreateTrip
+        );
+        Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo(
+            $SendUpdateDriverInfoApplication,
+            $GetStatusDriverJobApplication
+        );
 
     }
 }

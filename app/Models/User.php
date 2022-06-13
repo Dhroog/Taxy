@@ -50,10 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     //////////relationships///////////////
-    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
+
 
     public function code(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
@@ -63,6 +60,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function driver(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Driver::class);
+    }
+
+    public function admin(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Customer::class);
     }
 
     public function jobapplication(): \Illuminate\Database\Eloquent\Relations\HasOne
