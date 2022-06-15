@@ -176,7 +176,7 @@ class AuthController extends Controller
         // validation
         $request->validate([
             "phone" => "required|size:10",
-            "code" => "required|int|size:6",
+            "code" => "required|size:6",
             "password" => "required|confirmed"
         ]);
 
