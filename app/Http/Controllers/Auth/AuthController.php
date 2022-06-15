@@ -158,6 +158,9 @@ class AuthController extends Controller
             $time_now = Carbon::instance(Carbon::now());
             $time_updated = Carbon::instance($code->updated_at);
             $time_created = Carbon::instance($code->created_at);
+            ///insert new fcm token
+            $user->fcm_token = $request->fcm_token;
+            $user->save();
 
             if( $time_created->diffInMinutes($time_updated) == 0 || $time_now->diffInMinutes($time_updated) >= 2 )
             {
@@ -166,7 +169,7 @@ class AuthController extends Controller
                 if( $this->sendnotification($user->fcm_token,'Code Verification',$code->code,'') )
                 return $this->returnSuccessMessage("we send code to your phone");
                 else return $this->returnError("fail send notification");
-            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now),501);
+            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now));
 
         }else return $this->returnError('something went wrong with phone ');
     }
@@ -192,7 +195,7 @@ class AuthController extends Controller
         }else return $this->returnError('wrong phone');
     }
     ///ChangePassword
-    public function ChangePassword(Request $request)
+    public function ChangePassword(Request $request): JsonResponse
     {
         $request->validate([
             "phone" => "required|size:10",
