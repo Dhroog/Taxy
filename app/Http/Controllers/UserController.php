@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Code;
+use App\Models\Driver;
 use App\Models\image;
+use App\Models\Trip;
 use App\Models\User;
 use App\Services\FCMService;
 use App\Traits\GeneralTrait;
@@ -119,11 +121,11 @@ class UserController extends Controller
 
     }
     //test
-    public function test(): JsonResponse
+    public function test(Request $request): JsonResponse
     {
-        $b = Carbon::now()->addMinutes(2);
 
-        return $this->returnSuccessMessage();
+        $a = $this->BelongsToCircle(100,$request->c_lat,$request->c_long,$request->lat,$request->long);
+        return $this->returnData('what',$a);
     }
 }
 

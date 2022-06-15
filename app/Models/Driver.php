@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Driver extends Model
@@ -18,18 +20,23 @@ class Driver extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function UpdateInfo(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function UpdateInfo(): HasMany
     {
         return $this->hasMany(Updatedriverinfoapplication::class);
     }
 
-    public function car(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function car(): HasOne
     {
         return $this->hasOne(Car::class);
     }
 
-    public function trips(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
+    }
+
+    public function rejection(): HasMany
+    {
+        return $this->hasMany(Rejectation::class);
     }
 }

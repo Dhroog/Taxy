@@ -18,7 +18,7 @@ class ActiveAcount
     {
         if( !$request->user()->status )
         {
-            return response()->json('Access Denied',501);
+            return response()->json('Access Denied your Account not active',501);
         }
         return $next($request);
     }

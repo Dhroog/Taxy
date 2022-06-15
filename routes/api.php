@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\ReasonController;
 use App\Http\Controllers\RolesPermissionController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 ////////////////////////////////////////////////All Api not Need AUTH///////////////////////////////////////////////////////////////////
 
-route::get('test/',[UserController::class,'test']);
+route::post('test/',[UserController::class,'test']);
 
     Route::post("register", [AuthController::class, "register"]);
     Route::post("login", [AuthController::class, "login"]);
@@ -40,12 +41,12 @@ route::get('test/',[UserController::class,'test']);
 ////////////////////////////////////////////////All Api Need AUTH///////////////////////////////////////////////////////////////////
 Route::group(["prefix" => "", "middleware" => ["auth:sanctum"]], function () {
 
-    route::get('ReSendCode',[AuthController::class, "ReSendCode"])->middleware("");
-    Route::post("customer/VerifyPhone", [AuthController::class, "VerifyPhone"])->middleware("");
-    Route::post("InsertTokenFireBase", [AuthController::class, "InsertTokenFireBase"])->middleware("");
-    Route::post("UploadImage", [UserController::class, "UploadImage"])->middleware("");
-    Route::get("GetImageById/{id}", [UserController::class, "GetImageById"])->middleware("");
-    Route::get("logout", [AuthController::class, "logout"])->middleware("");
+    route::get('ReSendCode',[AuthController::class, "ReSendCode"]);
+    Route::post("customer/VerifyPhone", [AuthController::class, "VerifyPhone"]);
+    Route::post("InsertTokenFireBase", [AuthController::class, "InsertTokenFireBase"]);
+    Route::post("UploadImage", [UserController::class, "UploadImage"]);
+    Route::get("GetImageById/{id}", [UserController::class, "GetImageById"]);
+    Route::get("logout", [AuthController::class, "logout"]);
 
 
 
@@ -76,6 +77,10 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('AddPermissionToUser',[RolesPermissionController::class,'AddPermissionToUser'])->middleware("permission:Add-Permission-To-User");
     Route::post('RemovePermissionFromUser',[RolesPermissionController::class,'RemovePermissionFromUser'])->middleware("permission:Remove-Permission-From-User");
     Route::post('ChangeRoleUser',[RolesPermissionController::class,'ChangeRoleUser'])->middleware("permission:Change-Role-User");
+    Route::post('CreateReason',[ReasonController::class,'create'])->middleware("permission:Create-Reason");
+    Route::put('EditReason',[ReasonController::class,'edit'])->middleware("permission:Update-Reason");
+    Route::Delete('DeleteReason/{id}',[ReasonController::class,'delete'])->middleware("permission:Delete-Reason");
+    Route::get('GetAllReasons',[ReasonController::class,'GetAllReasons'])->middleware("permission:Get-All-Reasons");
 
 
 
@@ -89,8 +94,9 @@ Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAc
     Route::get("profile", [UserController::class, "profile"])->middleware("permission:Show-Profile");
     Route::put("UpdateProfile", [UserController::class, "Update"])->middleware("permission:Update-Profile");
     Route::post("DriverJobApplication", [DriverController::class, "DriverJobApplication"])->middleware("permission:Send-Job-Application");
-
     Route::post("CreateTrip", [TripController::class, "CreateTrip"])->middleware("permission:Create-Trip");
+    Route::post("ConfirmTrip", [TripController::class, "ConfirmTrip"])->middleware("permission:Confirm-Trip");
+
 
 
 });
