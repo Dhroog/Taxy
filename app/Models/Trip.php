@@ -41,4 +41,9 @@ class Trip extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function position(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Position::class);
+    }
+
 }

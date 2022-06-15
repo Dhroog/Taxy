@@ -3,19 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\rr;
-use App\Mail\VerfyEmail;
 use App\Models\Code;
-use App\Models\Role_User;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
-use http\Env\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Mail;
 
 
 class AuthController extends Controller
@@ -81,9 +76,13 @@ class AuthController extends Controller
                 */
                 // create a token
                 $token = $user->createToken("auth_token")->plainTextToken;
+                $arry = array(
+                    'access_token' => $token,
+                    'user_id' => $user->id
+                );
 
                 /// send a response
-                return $this->returnData('logged in successfully', $token , 'access_token' );
+                return $this->returnData('logged in successfully', $arry  );
 
             } else {
 
@@ -96,11 +95,11 @@ class AuthController extends Controller
         }
     }
     //verified
-    public function VerifyPhone(Request $request)
+    public function VerifyPhone(Request $request): JsonResponse
     {
         // validation
         $request->validate([
-            "code" => "required|int",
+            "code" => "required|size:6",
         ]);
 
         if ( auth()->user()->code->code == $request->code ) {
@@ -125,7 +124,7 @@ class AuthController extends Controller
         return $this->returnSuccessMessage( 'logged out successfully');
     }
     //resend code
-    public function ReSendCode()
+    public function ReSendCode(): JsonResponse
     {
         $code = auth()->user()->code;
 
@@ -133,19 +132,19 @@ class AuthController extends Controller
         $time_updated = Carbon::instance($code->updated_at);
         $time_created = Carbon::instance($code->created_at);
 
-        if( $time_now->diffInMinutes($time_updated) >= 0 || $time_now->diffInMinutes($time_created) <= 2 )
+        if( $time_created->diffInMinutes($time_updated) == 0 || $time_now->diffInMinutes($time_updated) >= 2 )
         {
             $code->code = random_int(100000,999999);
             $code->save();
-            if($this->sendnotification(auth()->user()->fcm_token,'Code Verification',$code->code,''))
-            return $this->returnSuccessMessage("Success");
+            if($this->sendnotification(auth()->user()->fcm_token,'Code Verification',$code->code))
+            return $this->returnSuccessMessage();
             else return $this->returnError("fail send notification");
-        }else return $this->returnData("can't send code now",2-$time_updated->diffInMinutes($time_now), 501);
+        }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now), 501);
 
 
     }
     ///ForgetPassword
-    public function ForgetPassword(Request $request)
+    public function ForgetPassword(Request $request): JsonResponse
     {
         // validation
         $request->validate([
@@ -158,15 +157,16 @@ class AuthController extends Controller
             $code = $user->code;
             $time_now = Carbon::instance(Carbon::now());
             $time_updated = Carbon::instance($code->updated_at);
+            $time_created = Carbon::instance($code->created_at);
 
-            if($time_now->diffInMinutes($time_updated) >= 2)
+            if( $time_created->diffInMinutes($time_updated) == 0 || $time_now->diffInMinutes($time_updated) >= 2 )
             {
                 $code->code = random_int(100000,999999);
                 $code->save();
                 if( $this->sendnotification($user->fcm_token,'Code Verification',$code->code,'') )
                 return $this->returnSuccessMessage("we send code to your phone");
                 else return $this->returnError("fail send notification");
-            }else return $this->returnData("can't send code now",2-$time_updated->diffInMinutes($time_now),501);
+            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now),501);
 
         }else return $this->returnError('something went wrong with phone ');
     }

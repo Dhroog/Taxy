@@ -13,16 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cars', function (Blueprint $table) {
+        Schema::create('rejectations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('driver_id');
-            $table->unsignedBigInteger('category_id')->nullable();
-            $table->string('model');
-            $table->string('color');
-            $table->string('number');
-            $table->string('image')->nullable();
+            $table->unsignedBigInteger('trip_id');
             $table->timestamps();
-            $table->softDeletes();
             $table->foreign("driver_id")->references('id')->on('drivers')->onDelete('cascade');
 
         });
@@ -35,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cars');
+        Schema::dropIfExists('rejectations');
     }
 };

@@ -1,55 +1,50 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Listeners;
 
+use App\Events\SearchAboutDrivers;
 use App\Models\Driver;
 use App\Models\Trip;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class SearchAboutDriver implements ShouldQueue
+class SearchAboutDriver
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,GeneralTrait;
-
+    use GeneralTrait;
     /**
-     * Create a new job instance.
+     * Create the event listener.
      *
      * @return void
      */
-    protected $trip_id,$category_id;
-    public function __construct($trip_id,$category_id)
+    public function __construct()
     {
-        $this->trip_id = $trip_id;
-        $this->category_id = $category_id;
+        //
     }
 
     /**
-     * Execute the job.
+     * Handle the event.
      *
+     * @param  object  $event
      * @return void
      */
-    public function handle()
+    public function handle(SearchAboutDrivers $event)
     {
-        $trip = Trip::find($this->trip_id);
+        $trip = Trip::find($event->trip_id);
         if(isset($trip))
         {
             $accepted = false;
             $now = Carbon::now();
-            $after3minutes = $now->addMinutes(3);
-            while( $now->diffInMinutes($after3minutes) < 3 || $accepted	 == false )
+            $after3minutes = $now->addMinutes(0);
+            while( $now->diffInMinutes($after3minutes) < 2 || $accepted	 == false )
             {
                 ///////get all available drivers
                 $drivers = Driver::where('available',true)->get();
                 foreach ($drivers as $driver)
                 {
                     //check if driver Belongs To Circle customer
-                    if( $this->BelongsToCircle(100,$trip->s_lat,$trip->s_long,$driver->lat,$driver->long) && $driver->car->category->id == $this->category_id )
+                    if( $this->BelongsToCircle(100,$trip->s_lat,$trip->s_long,$driver->lat,$driver->long) && $driver->car->category->id == $event->category_id )
                     {
                         ///check if driver not reject this trip before
                         $rejections = $driver->rejection;
@@ -58,7 +53,7 @@ class SearchAboutDriver implements ShouldQueue
                         {
                             foreach ($rejections as $value)
                             {
-                                if( $value->trip_id == $this->trip_id )
+                                if( $value->trip_id == $event->trip_id )
                                 {
                                     $re = false;
                                     break;
@@ -73,13 +68,12 @@ class SearchAboutDriver implements ShouldQueue
                     }
                 }
 
-                $trip = Trip::find($this->trip_id);
+                $trip = Trip::find($event->trip_id);
                 $accepted = $trip->accepted;
 
-                sleep(30);
+                //sleep(30);
                 $now = Carbon::now();
             }
         }
-
     }
 }

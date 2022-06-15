@@ -5,7 +5,7 @@ use phpDocumentor\Reflection\Types\Boolean;
 
 class FCMService
 {
-    public static  function  send( $token,$notification,$data )
+    public static  function  send( $token,$notification,$data ): bool
     {
         $fields = [
             'to' => $token,
