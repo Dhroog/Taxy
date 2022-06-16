@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->boolean('status');
+            $table->boolean('banned')->default(false);
             $table->string('image')->nullable();;
             $table->string('password');
             $table->string('fcm_token')->nullable();

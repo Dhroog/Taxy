@@ -39,4 +39,9 @@ class Driver extends Model
     {
         return $this->hasMany(Rejectation::class);
     }
+
+    public function balance(): HasOne
+    {
+        return $this->hasOne(Balance::class);
+    }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Balance;
 use App\Models\Car;
 use App\Models\Code;
 use App\Models\Customer;
@@ -63,6 +64,9 @@ class UserSeeder extends Seeder
                     $car->color = 'blue';
                     $car->number = 5060123456;
                     $car->save();
+                    $balance = new Balance();
+                    $balance->driver_id = $driver->id;
+                    $balance->save();
                 }
             );
         User::factory()->count(1)

@@ -19,7 +19,7 @@ class CategoryFactory extends Factory
         return [
             'name' => $this->faker->streetName(),
             'description' => $this->faker->sentence(),
-            'cost' => $this->faker->randomNumber(3)
+            'cost' => $this->faker->randomNumber(1)
         ];
     }
 }

@@ -70,7 +70,6 @@ class UserController extends Controller
             return $this->returnError('user not found');
         }
     }
-
     ///UpdateProfile
     public function Update(Request $request): JsonResponse
     {
@@ -121,10 +120,9 @@ class UserController extends Controller
 
     }
     //test
-    public function test(Request $request): JsonResponse
+    public function test($id): JsonResponse
     {
-
-        $a = $this->BelongsToCircle(100,$request->c_lat,$request->c_long,$request->lat,$request->long);
+        $a = Trip::find($id)->Cancellation_reason;
         return $this->returnData('what',$a);
     }
 }

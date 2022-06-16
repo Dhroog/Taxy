@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,28 +55,35 @@ class User extends Authenticatable implements MustVerifyEmail
     //////////relationships///////////////
 
 
-    public function code(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function code(): HasOne
     {
         return $this->hasOne(Code::class);
     }
 
-    public function driver(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function driver(): HasOne
     {
         return $this->hasOne(Driver::class);
     }
 
-    public function admin(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function admin(): HasOne
     {
         return $this->hasOne(Admin::class);
     }
 
-    public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function customer(): HasOne
     {
         return $this->hasOne(Customer::class);
     }
 
-    public function jobapplication(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function jobapplication(): HasOne
     {
         return $this->hasOne(Jobapplication::class);
     }
+
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class);
+    }
+
+
 }

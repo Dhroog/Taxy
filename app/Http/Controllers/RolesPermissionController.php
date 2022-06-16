@@ -51,15 +51,6 @@ class RolesPermissionController extends Controller
 
     }
 
-    public function GetAllCategories(): \Illuminate\Http\JsonResponse
-    {
-        $categories = Category::all();
-        if( isset($categories) )
-        {
-            return $this->returnData("get all categories",$categories);
-        }else return $this->returnError("categories not found");
-    }
-
     public function GetAllRoles(): \Illuminate\Http\JsonResponse
     {
         $roles = Role::all();

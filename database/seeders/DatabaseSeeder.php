@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             CategoriesSeeder::class,
+            Rejection_reasonSeeder::class,
+            Cancellation_reasonSeeder::class,
 
         ]);
     }
