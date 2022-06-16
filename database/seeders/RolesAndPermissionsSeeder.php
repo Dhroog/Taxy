@@ -53,14 +53,29 @@ class RolesAndPermissionsSeeder extends Seeder
         $AddPermissionToUser = 'Add-Permission-To-User';
         $RemovePermissionFromUser = 'Remove-Permission-From-User';
         $ChangeRoleUser = 'Change-Role-User';
+        ///Manage Cancellation Reasons
+        $CreateCancellationReason = 'Create-Cancellation-Reason';
+        $UpdateCancellationReason = 'Update-Cancellation-Reason';
+        $DeleteCancellationReason = 'Delete-Cancellation-Reason';
+        $GetAllCancellationReasons = 'Get-All-Cancellation-Reasons';
+        ///Manage Rejection Reasons
+        $CreateRejectionReason = 'Create-Rejection-Reason';
+        $UpdateRejectionReason = 'Update-Rejection-Reason';
+        $DeleteRejectionReason = 'Delete-Rejection-Reason';
+        $GetAllRejectionReasons = 'Get-All-Rejection-Reasons';
+        $SendRejectionReason = 'Send-Rejection-Reason';
         ///Manage Trips
         $CreateTrip = 'Create-Trip';
         $ConfirmTrip = 'Confirm-Trip';
-        ///Manage Reasons
-        $CreateReason = 'Create-Reason';
-        $UpdateReason = 'Update-Reason';
-        $DeleteReason = 'Delete-Reason';
-        $GetAllReasons = 'Get-All-Reasons';
+        $GetTripById = 'Get-Trip-By-Id';
+        $GetAllTrips = 'Get-All-Trips';
+        $GetAllTripsDriverCanAccept = 'Get-All-Trips-Driver-Can-Accept';
+        $GetUserTrips = 'Get-User-Trips';
+        $GetDriverTrips = 'Get-Driver-Trips';
+        $AcceptTrip = 'Accept-Trip';
+        $GetAllActiveTrips = 'Get-All-Active-Trips';
+        $SendCancellationReason = 'Send-Cancellation-Reason';
+
 
 
 
@@ -94,10 +109,23 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $ChangeRoleUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $CreateTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $ConfirmTrip]);
-        Permission::create(['guard_name' => 'sanctum','name' => $CreateReason]);
-        Permission::create(['guard_name' => 'sanctum','name' => $UpdateReason]);
-        Permission::create(['guard_name' => 'sanctum','name' => $DeleteReason]);
-        Permission::create(['guard_name' => 'sanctum','name' => $GetAllReasons]);
+        Permission::create(['guard_name' => 'sanctum','name' => $CreateCancellationReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $UpdateCancellationReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $DeleteCancellationReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllCancellationReasons]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendCancellationReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $CreateRejectionReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $UpdateRejectionReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $DeleteRejectionReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllRejectionReasons]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendRejectionReason]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetTripById]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllTrips]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllActiveTrips]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllTripsDriverCanAccept]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetUserTrips]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetDriverTrips]);
+        Permission::create(['guard_name' => 'sanctum','name' => $AcceptTrip]);
 
 
 
@@ -116,11 +144,21 @@ class RolesAndPermissionsSeeder extends Seeder
             $UpdateProfile,
             $SendJobApplication,
             $CreateTrip,
-            $ConfirmTrip
+            $ConfirmTrip,
+            $GetUserTrips,
+            $GetTripById,
+            $SendCancellationReason
         );
         Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo(
             $SendUpdateDriverInfoApplication,
-            $GetStatusDriverJobApplication
+            $GetStatusDriverJobApplication,
+            $GetAllTripsDriverCanAccept,
+            $GetDriverTrips,
+            $GetUserTrips,
+            $GetTripById,
+            $AcceptTrip,
+            $SendCancellationReason,
+            $SendRejectionReason
         );
 
     }

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
@@ -36,14 +38,19 @@ class Trip extends Model
         return $this->belongsTo(Driver::class);
     }
 
-    public function customer(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function position(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function position(): HasMany
     {
         return $this->hasMany(Position::class);
+    }
+
+    public function Cancellation_reason(): BelongsToMany
+    {
+        return $this->belongsToMany(Cancellation_reason::class,'cancellation_trips','trip_id','cancellation_reason_id');
     }
 
 }

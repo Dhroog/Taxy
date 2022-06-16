@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CancellationReasonController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\ReasonController;
+use App\Http\Controllers\RejectionReasonController;
 use App\Http\Controllers\RolesPermissionController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
@@ -25,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 ////////////////////////////////////////////////All Api not Need AUTH///////////////////////////////////////////////////////////////////
 
-route::post('test/',[UserController::class,'test']);
+route::get('test/{id}',[UserController::class,'test']);
 
     Route::post("register", [AuthController::class, "register"]);
     Route::post("login", [AuthController::class, "login"]);
@@ -77,10 +79,14 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('AddPermissionToUser',[RolesPermissionController::class,'AddPermissionToUser'])->middleware("permission:Add-Permission-To-User");
     Route::post('RemovePermissionFromUser',[RolesPermissionController::class,'RemovePermissionFromUser'])->middleware("permission:Remove-Permission-From-User");
     Route::post('ChangeRoleUser',[RolesPermissionController::class,'ChangeRoleUser'])->middleware("permission:Change-Role-User");
-    Route::post('CreateReason',[ReasonController::class,'create'])->middleware("permission:Create-Reason");
-    Route::put('EditReason',[ReasonController::class,'edit'])->middleware("permission:Update-Reason");
-    Route::Delete('DeleteReason/{id}',[ReasonController::class,'delete'])->middleware("permission:Delete-Reason");
-    Route::get('GetAllReasons',[ReasonController::class,'GetAllReasons'])->middleware("permission:Get-All-Reasons");
+    Route::post('CreateCancellationReason',[CancellationReasonController::class,'create'])->middleware("permission:Create-Cancellation-Reason");
+    Route::put('EditCancellationReason',[CancellationReasonController::class,'edit'])->middleware("permission:Update-Cancellation-Reason");
+    Route::Delete('DeleteCancellationReason/{id}',[CancellationReasonController::class,'delete'])->middleware("permission:Delete-Cancellation-Reason");
+    Route::get('GetAllCancellationReasons',[CancellationReasonController::class,'GetAllCancellationReasons'])->middleware("permission:Get-All-Cancellation-Reasons");
+    Route::post('CreateRejectionReason',[RejectionReasonController::class,'create'])->middleware("permission:Create-Rejection-Reason");
+    Route::put('EditRejectionReason',[RejectionReasonController::class,'edit'])->middleware("permission:Update-Rejection-Reason");
+    Route::Delete('DeleteRejectionReason/{id}',[RejectionReasonController::class,'delete'])->middleware("permission:Delete-Rejection-Reason");
+    Route::get('GetAllRejectionReasons',[RejectionReasonController::class,'GetAllRejectionReasons'])->middleware("permission:Get-All-Rejection-Reasons");
 
 
 
@@ -94,8 +100,6 @@ Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAc
     Route::get("profile", [UserController::class, "profile"])->middleware("permission:Show-Profile");
     Route::put("UpdateProfile", [UserController::class, "Update"])->middleware("permission:Update-Profile");
     Route::post("DriverJobApplication", [DriverController::class, "DriverJobApplication"])->middleware("permission:Send-Job-Application");
-    Route::post("CreateTrip", [TripController::class, "CreateTrip"])->middleware("permission:Create-Trip");
-    Route::post("ConfirmTrip", [TripController::class, "ConfirmTrip"])->middleware("permission:Confirm-Trip");
 
 
 
@@ -106,8 +110,34 @@ Route::group(["prefix" => "Driver", "middleware" => ["auth:sanctum", "ActiveAcco
 
     Route::post("UpdateDriverInfoApplication", [DriverController::class, "UpdateDriverInfoApplication"])->middleware("permission:Send-Update-Driver-Info-Application");
     route::get('GetStatusDriverJobApplication/{id}',[DriverController::class,'GetStatusDriverJobApplication'])->middleware("permission:Get-Status-Driver-Job-Application");
+    Route::post("SendRejectionReason", [RejectionReasonController::class, "SendRejectionReason"])->middleware("permission:Send-Rejection-Reason");
+
 
 
 });
+
+///////////////////////////////////////Trip api///////////////////////////////////////////////////////////////
+Route::group(["prefix" => "Trip", "middleware" => ["auth:sanctum", "ActiveAccount"]], function () {
+
+    Route::post("CreateTrip", [TripController::class, "CreateTrip"])->middleware("permission:Create-Trip");
+    Route::post("ConfirmTrip", [TripController::class, "ConfirmTrip"])->middleware("permission:Confirm-Trip");
+    Route::get("GetTripById/{id}", [TripController::class, "GetTripById"])->middleware("permission:Get-Trip-By-Id");
+    Route::get("GetAllTrips", [TripController::class, "GetAllTrips"])->middleware("permission:Get-All-Trips");
+    Route::get("GetAllActiveTrips", [TripController::class, "GetAllActiveTrips"])->middleware("permission:Get-All-Active-Trips");
+    Route::get("GetAllTripsDriverCanAccept/{driver_id}", [TripController::class, "GetAllTripsDriverCanAccept"])->middleware("permission:Get-All-Trips-Driver-Can-Accept");
+    Route::get("GetUserTrips/{id}", [TripController::class, "GetUserTrips"])->middleware("permission:Get-User-Trips");
+    Route::get("GetDriverTrips/{id}", [TripController::class, "GetDriverTrips"])->middleware("permission:Get-Driver-Trips");
+    Route::get("AcceptTrip/{id}", [TripController::class, "AcceptTrip"])->middleware("permission:Accept-Trip");
+    Route::post("SendCancellationReason", [CancellationReasonController::class, "SendCancellationReason"])->middleware("permission:Send-Cancellation-Reason");
+
+
+
+
+
+
+
+
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

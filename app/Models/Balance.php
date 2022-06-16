@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Customer extends Model
+class Balance extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
-    public function user(): BelongsTo
+    protected $fillable = ['driver_id','amount'];
+
+    public function driver(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Driver::class);
     }
-
-
 }

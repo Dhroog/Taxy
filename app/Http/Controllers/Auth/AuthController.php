@@ -57,7 +57,8 @@ class AuthController extends Controller
         $request->validate([
 
             "phone" => "required|size:10",
-            "password" => "required"
+            "password" => "required",
+            "fcm_token" => "required|string",
         ]);
 
         // check user
@@ -65,6 +66,8 @@ class AuthController extends Controller
         if (isset($user->id)) {
 
             if (Hash::check($request->password, $user->password)) {
+                $user->fcm_token = $request->fcm_token;
+                $user->save();
 
                 //store abilities this user in array
                 /*
@@ -78,7 +81,9 @@ class AuthController extends Controller
                 $token = $user->createToken("auth_token")->plainTextToken;
                 $arry = array(
                     'access_token' => $token,
-                    'user_id' => $user->id
+                    'user_id' => $user->id,
+                    'active' => $user->status,
+                    'banned' => $user->banned
                 );
 
                 /// send a response
@@ -139,7 +144,7 @@ class AuthController extends Controller
             if($this->sendnotification(auth()->user()->fcm_token,'Code Verification',$code->code))
             return $this->returnSuccessMessage();
             else return $this->returnError("fail send notification");
-        }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now), 501);
+        }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now), 'data',501);
 
 
     }
@@ -159,17 +164,17 @@ class AuthController extends Controller
             $time_updated = Carbon::instance($code->updated_at);
             $time_created = Carbon::instance($code->created_at);
             ///insert new fcm token
-            $user->fcm_token = $request->fcm_token;
-            $user->save();
+           // $user->fcm_token = $request->fcm_token;
+            //$user->save();
 
             if( $time_created->diffInMinutes($time_updated) == 0 || $time_now->diffInMinutes($time_updated) >= 2 )
             {
                 $code->code = random_int(100000,999999);
                 $code->save();
-                if( $this->sendnotification($user->fcm_token,'Code Verification',$code->code,'') )
+                if( $this->sendnotification($request->fcm_token,'Code Verification',$code->code,'') )
                 return $this->returnSuccessMessage("we send code to your phone");
                 else return $this->returnError("fail send notification");
-            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now));
+            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now),'data',501);
 
         }else return $this->returnError('something went wrong with phone ');
     }
