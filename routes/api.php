@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CancellationReasonController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DriverController;
-use App\Http\Controllers\ReasonController;
 use App\Http\Controllers\RejectionReasonController;
 use App\Http\Controllers\RolesPermissionController;
 use App\Http\Controllers\TripController;
@@ -111,6 +110,8 @@ Route::group(["prefix" => "Driver", "middleware" => ["auth:sanctum", "ActiveAcco
     Route::post("UpdateDriverInfoApplication", [DriverController::class, "UpdateDriverInfoApplication"])->middleware("permission:Send-Update-Driver-Info-Application");
     route::get('GetStatusDriverJobApplication/{id}',[DriverController::class,'GetStatusDriverJobApplication'])->middleware("permission:Get-Status-Driver-Job-Application");
     Route::post("SendRejectionReason", [RejectionReasonController::class, "SendRejectionReason"])->middleware("permission:Send-Rejection-Reason");
+    Route::get("StartTrip/{trip_id}", [CancellationReasonController::class, "StartTrip"])->middleware("permission:Start-Trip");
+
 
 
 
