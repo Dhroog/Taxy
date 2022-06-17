@@ -6,6 +6,7 @@ use App\Events\SearchAboutDrivers;
 use App\Jobs\SearchAboutDriver;
 use App\Models\Category;
 use App\Models\Driver;
+use App\Models\Position;
 use App\Models\Trip;
 use App\Models\User;
 use App\Traits\GeneralTrait;
@@ -234,6 +235,36 @@ class TripController extends Controller
             }else return $this->returnError('Trip not confirmed');
 
         }else return $this->returnError('trip not found');
+    }
+
+    public function  SetTrackingTrip(Request $request): JsonResponse
+    {
+        $request->validate([
+            'trip_id' => 'required|int',
+            'long' => 'required',
+            'lat' => 'required'
+        ]);
+        $trip = Trip::find($request->trip_id);
+        if(isset($trip))
+        {
+            if(!$trip->ended)
+            {
+                if($trip->started)
+                {
+                    ///create position trip
+                    $pos = new Position();
+                    $pos->trip_id = $trip->id;
+                    $pos->lat = $request->lat;
+                    $pos->long = $request->long;
+                    $pos->save();
+                    ///attach pos with trip
+                    $trip->position()->save($pos);
+                    $notification = 'Lat : '.$pos->lat.'                    Long : '.$pos->long;
+                    $this->sendnotification($trip->user->fcm_token,'Tracking Trip',$notification);
+                    return $this->returnSuccessMessage();
+                }return $this->returnError("this trip isn't started yet");
+            }else return $this->returnError('this trip is ended');
+        }else return $this->returnError('this trip not found');
     }
 
 

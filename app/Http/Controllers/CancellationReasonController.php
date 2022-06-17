@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 class CancellationReasonController extends Controller
 {
     use GeneralTrait;
+    /**
+     * Store a newly created cancellation reason  in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request): JsonResponse
     {
         $request->validate([
@@ -24,7 +30,12 @@ class CancellationReasonController extends Controller
         $reason->save();
         return $this->returnSuccessMessage();
     }
-
+    /**
+     * Update the specified cancellation reason in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function edit(Request $request): JsonResponse
     {
         $request->validate([
@@ -41,7 +52,12 @@ class CancellationReasonController extends Controller
         }else return $this->returnError("reason not found");
 
     }
-
+    /**
+     * Remove the specified cancellation reason from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete($id): JsonResponse
     {
         $reason = Cancellation_reason::find($id);
@@ -52,7 +68,11 @@ class CancellationReasonController extends Controller
         }else return $this->returnError("reason not found");
 
     }
-
+    /**
+     * Get All cancellation reasons from storage.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function GetAllCancellationReasons(): JsonResponse
     {
         $reason = Cancellation_reason::all();
@@ -61,7 +81,13 @@ class CancellationReasonController extends Controller
             return $this->returnData("get all reasons",$reason);
         }else return $this->returnError("reasons not found");
     }
-
+    /**
+     * Cancel the specified Trip and update it information in Storage
+     * and Store cancellation reasons for this Trip in Storage
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function SendCancellationReason(Request $request): JsonResponse
     {
         $request->validate([
@@ -95,8 +121,14 @@ class CancellationReasonController extends Controller
 
         }else return $this->returnError('Trip not found');
     }
-
-    public function StartTrip($trip_id)
+    /**
+     * Start the specified Trip and update it information in Storage.
+     * and send notification to customer.
+     *
+     * @param  int  $trip_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function StartTrip($trip_id): JsonResponse
     {
         $driver = auth()->user()->driver;
         if(isset($driver))
