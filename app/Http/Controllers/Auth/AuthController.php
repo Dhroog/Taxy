@@ -169,7 +169,10 @@ class AuthController extends Controller
             if($this->sendnotification(auth()->user()->fcm_token,'Code Verification',$code->code))
             return $this->returnSuccessMessage();
             else return $this->returnError("fail send notification");
-        }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now), 'data',501);
+        }else {
+            $e = 120-$time_updated->diffInSeconds($time_now);
+            return $this->returnData("can't send code now wait ".$e." sec",120-$time_updated->diffInSeconds($time_now),'data',501);
+        }
 
 
     }
@@ -209,7 +212,10 @@ class AuthController extends Controller
                 if( $this->sendnotification($request->fcm_token,'Code Verification',$code->code,'') )
                 return $this->returnSuccessMessage("we send code to your phone");
                 else return $this->returnError("fail send notification");
-            }else return $this->returnData("can't send code now",120-$time_updated->diffInSeconds($time_now),'data',501);
+            }else {
+                $e = 120-$time_updated->diffInSeconds($time_now);
+                return $this->returnData("can't send code now wait ".$e." sec",120-$time_updated->diffInSeconds($time_now),'data',501);
+            }
 
         }else return $this->returnError('something went wrong with phone ');
     }
