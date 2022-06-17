@@ -72,8 +72,51 @@ class CancellationReasonController extends Controller
         $trip = Trip::find($request->trip_id);
         if(isset($trip))
         {
-            $trip->Cancellation_reason()->attach($request->cancellation_id);
-            return  $this->returnSuccessMessage();
+            if(!$trip->sarted)
+            {
+                if(!$trip->canceled)
+                {
+
+                    //update trip
+                    $trip->canceled = true;
+                    $trip->save();
+                    //send notification to driver
+                    if($trip->accepted)
+                    {
+                        $driver = $trip->driver;
+                        $driver->available = true;
+                        $driver->save();
+                        $this->sendnotification($driver->user->fcm_token,'Cancellation Trip','Client Cancel your Trip');
+                    }
+                    $trip->Cancellation_reason()->attach($request->cancellation_id);
+                    return  $this->returnSuccessMessage();
+                }else return $this->returnError('this trip already canceled');
+            }else return $this->returnError('this trip is started ');
+
         }else return $this->returnError('Trip not found');
+    }
+
+    public function StartTrip($trip_id)
+    {
+        $driver = auth()->user()->driver;
+        if(isset($driver))
+        {
+            $trip = Trip::find($trip_id);
+            if(isset($trip))
+            {
+                if(!$trip->started)
+                {
+                    if(!$trip->canceled)
+                    {
+                        $trip->started = true;
+                        $trip->save();
+                        $this->sendnotification($trip->user->fcm_token,'Trip Started','Your Trip is started now ');
+                        return  $this->returnSuccessMessage('trip is started now');
+                    }else return $this->returnError('this trip is cancel');
+                }else return $this->returnError('this trip already started');
+
+            }else return $this->returnError('trip not found');
+
+        }$this->returnError('you are not driver');
     }
 }

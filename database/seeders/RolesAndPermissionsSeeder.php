@@ -75,6 +75,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $AcceptTrip = 'Accept-Trip';
         $GetAllActiveTrips = 'Get-All-Active-Trips';
         $SendCancellationReason = 'Send-Cancellation-Reason';
+        $StartTrip = 'Start-Trip';
 
 
 
@@ -126,6 +127,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $GetUserTrips]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetDriverTrips]);
         Permission::create(['guard_name' => 'sanctum','name' => $AcceptTrip]);
+        Permission::create(['guard_name' => 'sanctum','name' => $StartTrip]);
 
 
 
@@ -158,7 +160,8 @@ class RolesAndPermissionsSeeder extends Seeder
             $GetTripById,
             $AcceptTrip,
             $SendCancellationReason,
-            $SendRejectionReason
+            $SendRejectionReason,
+            $StartTrip,
         );
 
     }

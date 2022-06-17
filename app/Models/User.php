@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,7 +53,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    //////////relationships///////////////
+    ///Accessor
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => (asset('/Images/User/'.$value)),
+        );
+    }
+
+    //////////relationships///////////////public_path()
+    /// /asset('images/products/' . $this->image->name)
 
 
     public function code(): HasOne
