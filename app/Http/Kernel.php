@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'Abilities'=>\App\Http\Middleware\CheckAbilities::class,
         'AnyAbility'=>\App\Http\Middleware\CheckForAnyAbility::class,
         'ActiveAccount'=>\App\Http\Middleware\ActiveAcount::class,
+        'BannedAccount'=>\App\Http\Middleware\BannedAccount::class,
         'Headers'=>\App\Http\Middleware\HeadersApi::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,

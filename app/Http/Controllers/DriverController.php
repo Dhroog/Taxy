@@ -71,7 +71,8 @@ class DriverController extends Controller
         }else return $this->returnError("not found ");
 
     }
-    public function AllUpdateDriverInfoApplication()
+
+    public function AllUpdateDriverInfoApplication(): JsonResponse
     {
         $application = Updatedriverinfoapplication::paginate(15);
         if(isset($application))

@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 class RejectionReasonController extends Controller
 {
     use GeneralTrait;
+    /**
+     * Store a newly created rejection reason  in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request): JsonResponse
     {
         $request->validate([
@@ -24,7 +30,12 @@ class RejectionReasonController extends Controller
         $reason->save();
         return $this->returnSuccessMessage();
     }
-
+    /**
+     * Update the specified rejection reason in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function edit(Request $request): JsonResponse
     {
         $request->validate([
@@ -41,7 +52,12 @@ class RejectionReasonController extends Controller
         }else return $this->returnError("reason not found");
 
     }
-
+    /**
+     * Remove the specified rejection reason from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete($id): JsonResponse
     {
         $reason = Rejection_reason::find($id);
@@ -52,7 +68,11 @@ class RejectionReasonController extends Controller
         }else return $this->returnError("reason not found");
 
     }
-
+    /**
+     * Get All rejection reasons from storage.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function GetAllRejectionReasons(): JsonResponse
     {
         $reason = Rejection_reason::all();
@@ -61,7 +81,12 @@ class RejectionReasonController extends Controller
             return $this->returnData("get all reasons",$reason);
         }else return $this->returnError("reasons not found");
     }
-
+    /**
+     * Store the specified Trip which driver reject it in Storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function SendRejectionReason(Request $request): JsonResponse
     {
         $request->validate([

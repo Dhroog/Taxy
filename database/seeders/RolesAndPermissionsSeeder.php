@@ -76,6 +76,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $GetAllActiveTrips = 'Get-All-Active-Trips';
         $SendCancellationReason = 'Send-Cancellation-Reason';
         $StartTrip = 'Start-Trip';
+        $SetTrackingTrip = 'Set-Tracking-Trip';
+        $ChargeDriverBalance = 'Charge-Driver-Balance';
+        $GetDriverBalance = 'Get-Driver-Balance';
 
 
 
@@ -128,6 +131,9 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $GetDriverTrips]);
         Permission::create(['guard_name' => 'sanctum','name' => $AcceptTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $StartTrip]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SetTrackingTrip]);
+        Permission::create(['guard_name' => 'sanctum','name' => $ChargeDriverBalance]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetDriverBalance]);
 
 
 
@@ -149,7 +155,8 @@ class RolesAndPermissionsSeeder extends Seeder
             $ConfirmTrip,
             $GetUserTrips,
             $GetTripById,
-            $SendCancellationReason
+            $SendCancellationReason,
+            $SetTrackingTrip
         );
         Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo(
             $SendUpdateDriverInfoApplication,
@@ -162,6 +169,9 @@ class RolesAndPermissionsSeeder extends Seeder
             $SendCancellationReason,
             $SendRejectionReason,
             $StartTrip,
+            $ShowProfile,
+            $SetTrackingTrip,
+            $GetDriverBalance
         );
 
     }

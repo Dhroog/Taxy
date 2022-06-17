@@ -7,7 +7,6 @@ use App\Models\Code;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +17,12 @@ class AuthController extends Controller
     use GeneralTrait;
 
 
-    // REGISTER API
+    /**
+     * register a new customer.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(Request $request): JsonResponse
     {
 
@@ -50,7 +54,12 @@ class AuthController extends Controller
         // send response
         return $this->returnSuccessMessage('Success');
     }
-   // LOGIN
+    /**
+     * login user and store his fcm_token in database.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request): JsonResponse
     {
         // validation
@@ -91,15 +100,20 @@ class AuthController extends Controller
 
             } else {
 
-                return $this->returnError( "Something went wrong");
+                return $this->returnError( "Password incorrect");
             }
         } else {
 
-            return $this->returnError( "Something went wrong");
+            return $this->returnError( "Username incorrect");
 
         }
     }
-    //verified
+    /**
+     * verify Account user and make his account active .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function VerifyPhone(Request $request): JsonResponse
     {
         // validation
@@ -116,7 +130,11 @@ class AuthController extends Controller
 
 
     }
-    // LOGOUT API
+    /**
+     * logout user and delete his token .
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logout(): JsonResponse
     {
 
@@ -128,7 +146,14 @@ class AuthController extends Controller
 
         return $this->returnSuccessMessage( 'logged out successfully');
     }
-    //resend code
+
+    /**
+     * send notification to user have code for used for
+     * active  his account or change password.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function ReSendCode(): JsonResponse
     {
         $code = auth()->user()->code;
@@ -148,7 +173,13 @@ class AuthController extends Controller
 
 
     }
-    ///ForgetPassword
+    /**
+     *  send notification to user have code for used for
+     * active  his account or change password.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function ForgetPassword(Request $request): JsonResponse
     {
         // validation
@@ -164,8 +195,12 @@ class AuthController extends Controller
             $time_updated = Carbon::instance($code->updated_at);
             $time_created = Carbon::instance($code->created_at);
             ///insert new fcm token
-           // $user->fcm_token = $request->fcm_token;
-            //$user->save();
+            if(isset($request->fcm_token))
+            {
+                $user->fcm_token = $request->fcm_token;
+                $user->save();
+            }
+
 
             if( $time_created->diffInMinutes($time_updated) == 0 || $time_now->diffInMinutes($time_updated) >= 2 )
             {
@@ -178,8 +213,13 @@ class AuthController extends Controller
 
         }else return $this->returnError('something went wrong with phone ');
     }
-    ///ResetPassword
-    public function ResetPassword(Request $request)
+    /**
+     * change password for user with code
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ResetPassword(Request $request): JsonResponse
     {
         // validation
         $request->validate([
@@ -199,7 +239,12 @@ class AuthController extends Controller
             } else return $this->returnError(' wrong code ');
         }else return $this->returnError('wrong phone');
     }
-    ///ChangePassword
+    /**
+     * change password for user with old password
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function ChangePassword(Request $request): JsonResponse
     {
         $request->validate([
@@ -219,8 +264,13 @@ class AuthController extends Controller
             } else return $this->returnError(' wrong password ');
         }else return $this->returnError('wrong phone');
     }
-    //InsertTokenFireBase
-    public function InsertTokenFireBase(Request $request)
+    /**
+     * insert FCM_TOKEN user in database
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function InsertTokenFireBase(Request $request): JsonResponse
     {
         ///validation
         $request->validate([

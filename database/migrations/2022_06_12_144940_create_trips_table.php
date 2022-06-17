@@ -33,7 +33,7 @@ return new class extends Migration
             $table->boolean('canceled')->default(false);
             $table->boolean('confirmed')->default(false);
             $table->boolean('started')->default(false);
-            $table->boolean('delved')->default(false);
+            $table->boolean('ended')->default(false);
             $table->string('customer_name')->nullable();
             $table->string('customer_phone')->nullable();
             $table->string('customer_image')->nullable();
