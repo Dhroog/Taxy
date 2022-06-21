@@ -3,19 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
-use App\Models\Code;
 use App\Models\Driver;
 use App\Models\Jobapplication;
-use App\Models\Role_User;
 use App\Models\Updatedriverinfoapplication;
 use App\Models\User;
 use App\Traits\GeneralTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Testing\Fluent\Concerns\Has;
 
 class DriverController extends Controller
 {
@@ -271,5 +265,19 @@ class DriverController extends Controller
                 }
             }else return $this->returnError("This UpdateInfoApplication already done");
         }else return $this->returnError("Update Information Application not found");
+    }
+
+    public function ChangeStatusDriver(Request $request): JsonResponse
+    {
+        $request->validate([
+            'status' => 'required|bool'
+        ]);
+
+        $driver = auth()->user()->driver;
+        if(isset($driver))
+        {
+            $driver->available = $request->status;
+            $driver->save();
+        }else return $this->returnError();
     }
 }

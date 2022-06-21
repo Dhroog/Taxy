@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('surname');
             $table->integer('age');
             $table->boolean('available')->default(false);
-            $table->double('lat')->default(0);
-            $table->double('long')->default(0);
+            $table->float('lat')->default(0);
+            $table->float('long')->default(0);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign("user_id")->references('id')->on('users')->onDelete('cascade');

@@ -59,7 +59,7 @@ class CategoryController extends Controller
 
     public function GetAllCategories(): \Illuminate\Http\JsonResponse
     {
-        $categories = Category::all();
+        $categories = Category::paginate();
         if( isset($categories) )
         {
             return $this->returnData("get all categories",$categories);

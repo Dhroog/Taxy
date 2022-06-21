@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Driver>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Position>
  */
-class DriverFactory extends Factory
+class PositionFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,9 +17,6 @@ class DriverFactory extends Factory
     public function definition()
     {
         return [
-            'surname' => $this->faker->lastName(),
-            'age' => $this->faker->numberBetween(18,50),
-            'available' => $this->faker->boolean(),
             'lat' => $this->faker->latitude(),
             'long' => $this->faker->longitude()
         ];

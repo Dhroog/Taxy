@@ -113,8 +113,8 @@ class UserController extends Controller
         {
             if(isset($user->image))
             {
-                $myFile = public_path("Images/User/".$user->image);
-                return response()->download($myFile);
+
+                return $this->returnData('url image',$user->image);
             }else return $this->returnError('image not found');
         }else return  $this->returnError('user not found');
 

@@ -22,12 +22,34 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'password' => Hash::make(Str::random(10)), // password
             'phone' => random_int(1000000000,9999999999),
-            'image' => null,
+            'image' => $this->faker->imageUrl(),
             'status' => $this->faker->boolean(),
-            'fcm_token' => null,
+            'banned' => $this->faker->boolean(),
+            'fcm_token' => 'cw7BskxnSZKu1UAQd6hIIh:APA91bE74j1vRVX5uuRDBoeRzFhFqWB5Ep8WH_8ZzcDYSPfnNQ5wYyGaiTm8k9cKbWm5gcLcOfV7ruyun02EWcpvxaDgW0ci0iC1AXRHfcLrN7CrWyE3muGj4Pv5XkE9P7Vh_l-5DXQB',
 
 
         ];
+    }
+
+    public function admin(): UserFactory
+    {
+        return $this->state([
+            'type' => 'admin'
+        ]);
+    }
+
+    public function customer(): UserFactory
+    {
+        return $this->state([
+            'type' => 'customer'
+        ]);
+    }
+
+    public function driver(): UserFactory
+    {
+        return $this->state([
+            'type' => 'driver'
+        ]);
     }
 
     /**
