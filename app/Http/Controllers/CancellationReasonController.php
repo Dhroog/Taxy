@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cancellation_reason;
-use App\Models\Reason;
 use App\Models\Trip;
 use App\Traits\GeneralTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -75,7 +73,7 @@ class CancellationReasonController extends Controller
      */
     public function GetAllCancellationReasons(): JsonResponse
     {
-        $reason = Cancellation_reason::all();
+        $reason = Cancellation_reason::paginate();
         if( isset($reason) )
         {
             return $this->returnData("get all reasons",$reason);
@@ -121,34 +119,5 @@ class CancellationReasonController extends Controller
 
         }else return $this->returnError('Trip not found');
     }
-    /**
-     * Start the specified Trip and update it information in Storage.
-     * and send notification to customer.
-     *
-     * @param  int  $trip_id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function StartTrip($trip_id): JsonResponse
-    {
-        $driver = auth()->user()->driver;
-        if(isset($driver))
-        {
-            $trip = Trip::find($trip_id);
-            if(isset($trip))
-            {
-                if(!$trip->started)
-                {
-                    if(!$trip->canceled)
-                    {
-                        $trip->started = true;
-                        $trip->save();
-                        $this->sendnotification($trip->user->fcm_token,'Trip Started','Your Trip is started now ');
-                        return  $this->returnSuccessMessage('trip is started now');
-                    }else return $this->returnError('this trip is cancel');
-                }else return $this->returnError('this trip already started');
 
-            }else return $this->returnError('trip not found');
-
-        }$this->returnError('you are not driver');
-    }
 }

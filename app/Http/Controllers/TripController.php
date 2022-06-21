@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\SearchAboutDrivers;
-use App\Jobs\SearchAboutDriver;
 use App\Models\Category;
 use App\Models\Driver;
 use App\Models\Position;
+use App\Models\Rejectation;
 use App\Models\Trip;
 use App\Models\User;
 use App\Traits\GeneralTrait;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TripController extends Controller
 {
@@ -70,7 +67,7 @@ class TripController extends Controller
             'trip_id' => 'required|int',
             'radius' => 'int'
         ]);
-        $countOfDriverFuond = 0;
+        $countOfDriverFound = 0;
         $radius = 100;
         if(isset($request->radius))$radius = $request->radius;
 
@@ -89,10 +86,16 @@ class TripController extends Controller
                 //check if driver Belongs To Circle customer and his car belongs to category trip and have money in his balance
                 $DriverBelongsToCircleSearch = $this->BelongsToCircle($radius, $trip->s_lat, $trip->s_long, $driver->lat, $driver->long);
                 $DriverHaveSameCategory = $driver->car->category->id == $request->category_id;
-                $DriverHaveMoney = $driver->balance->amount >= $trip->cost;
-                if ( $DriverHaveMoney && $DriverHaveSameCategory && $DriverBelongsToCircleSearch )
+                $DriverHasMoney = $driver->balance->amount >= ($trip->cost * 10)/100;
+
+                if ( $DriverHasMoney && $DriverHaveSameCategory && $DriverBelongsToCircleSearch )
                 {
                     ///check if driver not reject this trip before
+                    $rejections = Rejectation::where([
+                        ['driver_id','=',$driver->id],
+                        ['trip_id','=',$trip->id]
+                    ])->get();
+                    /*
                     $rejections = $driver->rejection;
                     $re = true;
                     if (isset($reject)) {
@@ -102,19 +105,20 @@ class TripController extends Controller
                             }
                         }
                     }
+                    */
                     ////send notification to driver
-                    if ($re) {
-                        $this->sendnotification($driver->user->fcm_token, 'Trip Available ', 'there new trip can accept it');
-                        $countOfDriverFuond++;
+                    if ($rejections->isEmpty()) {
+                        $this->sendnotification($driver->user->fcm_token, 'Trip Available ', 'there a new trip you can accept it');
+                        $countOfDriverFound++;
                     }
                 }
             }
-            if($countOfDriverFuond != 0) return $this->returnSuccessMessage('we searching about drivers');
+            if($countOfDriverFound != 0) return $this->returnSuccessMessage('we searching about drivers');
             else return $this->returnSuccessMessage("didn't found any driver now ");
 
 
         }
-        else return $this->returnError('trip not found');
+        else return $this->returnError('trip or category not found ');
     }
 
     public function GetTripById($id): JsonResponse
@@ -265,6 +269,75 @@ class TripController extends Controller
                 }return $this->returnError("this trip isn't started yet");
             }else return $this->returnError('this trip is ended');
         }else return $this->returnError('this trip not found');
+    }
+
+    /**
+     * Start the specified Trip and update it information in Storage.
+     * and send notification to customer.
+     *
+     * @param  int  $trip_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function StartTrip($trip_id): JsonResponse
+    {
+        $driver = auth()->user()->driver;
+        if(isset($driver))
+        {
+            $trip = Trip::find($trip_id);
+            if(isset($trip))
+            {
+                if(!$trip->started)
+                {
+                    if(!$trip->canceled)
+                    {
+                        $trip->started = true;
+                        $trip->save();
+                        $this->sendnotification($trip->user->fcm_token,'Trip Started','Your Trip is started now ');
+                        return  $this->returnSuccessMessage('trip is started now');
+                    }else return $this->returnError('this trip is cancel');
+                }else return $this->returnError('this trip already started');
+
+            }else return $this->returnError('trip not found');
+
+        }else return $this->returnError('you are not driver');
+    }
+    /**
+     * End the specified Trip and update it information in Storage.
+     * and discount cost trip from driver balance.
+     * and send notification to customer.
+     *
+     * @param  int  $trip_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function EndTrip($trip_id): JsonResponse
+    {
+        $driver = auth()->user()->driver;
+        if(isset($driver))
+        {
+            $trip = Trip::find($trip_id);
+            if(isset($trip))
+            {
+                if($trip->started)
+                {
+                    if(!$trip->ended)
+                    {
+                        $trip->ended = true;
+                        $trip->save();
+                        ///make driver available
+                        $driver->available = true;
+                        $driver->save();
+                        $balance = $driver->balance;
+                        $balance->amount -= ($trip->cost * 10)/100;
+                        $balance->save();
+                        /// Send notification to user
+                        $this->sendnotification($trip->user->fcm_token,'Trip Ended','Your Trip is Ended now ');
+                        return  $this->returnSuccessMessage();
+                    }else return $this->returnError('this trip already ended');
+                }else return $this->returnError("this trip didn't started yet");
+
+            }else return $this->returnError('trip not found');
+
+        }else return $this->returnError('you are not driver');
     }
 
 

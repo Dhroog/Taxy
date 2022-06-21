@@ -79,6 +79,8 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('AddPermissionToUser',[RolesPermissionController::class,'AddPermissionToUser'])->middleware("permission:Add-Permission-To-User");
     Route::post('RemovePermissionFromUser',[RolesPermissionController::class,'RemovePermissionFromUser'])->middleware("permission:Remove-Permission-From-User");
     Route::post('ChangeRoleUser',[RolesPermissionController::class,'ChangeRoleUser'])->middleware("permission:Change-Role-User");
+    Route::post('AddRoleUser',[RolesPermissionController::class,'AddRoleUser'])->middleware("permission:Add-Role-User");
+    Route::post('RemoveRoleUser',[RolesPermissionController::class,'RemoveRoleUser'])->middleware("permission:Remove-Role-User");
     Route::post('CreateCancellationReason',[CancellationReasonController::class,'create'])->middleware("permission:Create-Cancellation-Reason");
     Route::put('EditCancellationReason',[CancellationReasonController::class,'edit'])->middleware("permission:Update-Cancellation-Reason");
     Route::Delete('DeleteCancellationReason/{id}',[CancellationReasonController::class,'delete'])->middleware("permission:Delete-Cancellation-Reason");
@@ -89,7 +91,7 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::get('GetAllRejectionReasons',[RejectionReasonController::class,'GetAllRejectionReasons'])->middleware("permission:Get-All-Rejection-Reasons");
     Route::post('ChargeDriverBalance',[BalanceController::class,'ChargeDriverBalance'])->middleware("permission:Charge-Driver-Balance");
     Route::post('DiscountDriverBalance',[BalanceController::class,'DiscountDriverBalance'])->middleware("permission:Discount-Driver-Balance");
-    Route::post('RewardDriverBalance',[BalanceController::class,'RewardDriverBalance']);//->middleware("permission:Reward-Driver-Balance");
+    Route::post('RewardDriverBalance',[BalanceController::class,'RewardDriverBalance'])->middleware("permission:Reward-Driver-Balance");
 
 
 
@@ -119,8 +121,12 @@ Route::group(["prefix" => "Driver", "middleware" => ["auth:sanctum", "ActiveAcco
     Route::post("UpdateDriverInfoApplication", [DriverController::class, "UpdateDriverInfoApplication"])->middleware("permission:Send-Update-Driver-Info-Application");
     route::get('GetStatusDriverJobApplication/{id}',[DriverController::class,'GetStatusDriverJobApplication'])->middleware("permission:Get-Status-Driver-Job-Application");
     Route::post("SendRejectionReason", [RejectionReasonController::class, "SendRejectionReason"])->middleware("permission:Send-Rejection-Reason");
-    Route::get("StartTrip/{trip_id}", [CancellationReasonController::class, "StartTrip"])->middleware("permission:Start-Trip");
     Route::get('GetDriverBalance/{id}',[BalanceController::class,'GetDriverBalance'])->middleware("permission:Get-Driver-Balance");
+    Route::get("StartTrip/{trip_id}", [TripController::class, "StartTrip"])->middleware("permission:Start-Trip");
+    Route::get("EndTrip/{trip_id}", [TripController::class, "EndTrip"])->middleware("permission:End-Trip");
+    Route::post("ChangeStatusDriver", [DriverController::class, "ChangeStatusDriver"])->middleware("permission:Change-Status-Driver");
+
+
 
 
 
@@ -141,9 +147,6 @@ Route::group(["prefix" => "Trip", "middleware" => ["auth:sanctum", "ActiveAccoun
     Route::get("GetDriverTrips/{id}", [TripController::class, "GetDriverTrips"])->middleware("permission:Get-Driver-Trips");
     Route::get("AcceptTrip/{id}", [TripController::class, "AcceptTrip"])->middleware("permission:Accept-Trip");
     Route::post("SendCancellationReason", [CancellationReasonController::class, "SendCancellationReason"])->middleware("permission:Send-Cancellation-Reason");
-
-
-
     Route::post("SetTrackingTrip/{id}", [TripController::class, "SetTrackingTrip"])->middleware("permission:Set-Tracking-Trip");
 
 

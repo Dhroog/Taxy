@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run()
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create Permissions
         //Manage Users
@@ -53,6 +53,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $AddPermissionToUser = 'Add-Permission-To-User';
         $RemovePermissionFromUser = 'Remove-Permission-From-User';
         $ChangeRoleUser = 'Change-Role-User';
+        $AddRoleUser = 'Add-Role-User';
+        $RemoveRoleUser = 'Remove-Role-User';
         ///Manage Cancellation Reasons
         $CreateCancellationReason = 'Create-Cancellation-Reason';
         $UpdateCancellationReason = 'Update-Cancellation-Reason';
@@ -79,6 +81,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $SetTrackingTrip = 'Set-Tracking-Trip';
         $ChargeDriverBalance = 'Charge-Driver-Balance';
         $GetDriverBalance = 'Get-Driver-Balance';
+        $EndTrip = 'End-Trip';
 
 
 
@@ -111,6 +114,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $AddPermissionToUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $RemovePermissionFromUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChangeRoleUser]);
+        Permission::create(['guard_name' => 'sanctum','name' => $AddRoleUser]);
+        Permission::create(['guard_name' => 'sanctum','name' => $RemoveRoleUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $CreateTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $ConfirmTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $CreateCancellationReason]);
@@ -134,6 +139,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $SetTrackingTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChargeDriverBalance]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetDriverBalance]);
+        Permission::create(['guard_name' => 'sanctum','name' => $EndTrip]);
+
 
 
 
@@ -171,7 +178,8 @@ class RolesAndPermissionsSeeder extends Seeder
             $StartTrip,
             $ShowProfile,
             $SetTrackingTrip,
-            $GetDriverBalance
+            $GetDriverBalance,
+            $EndTrip
         );
 
     }

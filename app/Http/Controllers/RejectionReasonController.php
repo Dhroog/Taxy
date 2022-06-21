@@ -75,7 +75,7 @@ class RejectionReasonController extends Controller
      */
     public function GetAllRejectionReasons(): JsonResponse
     {
-        $reason = Rejection_reason::all();
+        $reason = Rejection_reason::paginate();
         if( isset($reason) )
         {
             return $this->returnData("get all reasons",$reason);

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             Rejection_reasonSeeder::class,
             Cancellation_reasonSeeder::class,
+            testSeeder::class
 
         ]);
     }
