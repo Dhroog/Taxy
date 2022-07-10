@@ -19,7 +19,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create Permissions
+        ////// Define Permissions
         //Manage Users
         $GetAllUsers = 'Get-All-Users';
         $GetUser = 'Get-User';
@@ -88,6 +88,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
 
 
+        ////// Create Permissions
         Permission::create(['guard_name' => 'sanctum','name' => $GetAllUsers]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetAllDrivers]);

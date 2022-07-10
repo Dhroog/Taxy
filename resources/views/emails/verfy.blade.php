@@ -11,4 +11,5 @@
     <h1>your code is : </h1>
     <p>{{$code}}</p>
 </body>
+
 </html>
