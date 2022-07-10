@@ -321,17 +321,31 @@ class TripController extends Controller
                 {
                     if(!$trip->ended)
                     {
-                        $trip->ended = true;
-                        $trip->save();
-                        ///make driver available
-                        $driver->available = true;
-                        $driver->save();
-                        $balance = $driver->balance;
-                        $balance->amount -= ($trip->cost * 10)/100;
-                        $balance->save();
-                        /// Send notification to user
-                        $this->sendnotification($trip->user->fcm_token,'Trip Ended','Your Trip is Ended now ');
-                        return  $this->returnSuccessMessage();
+                        $pos = $trip->position;
+                        if($pos->isEmpty())
+                        {
+
+                            ///make driver available
+                            $driver->available = true;
+                            $driver->save();
+                            //calculate real distance
+                            $distance = 0;
+                            for($i = 0 ; $i <  count($pos)-1 ; $i++ )
+                            {
+                                    $distance += $this->DistanceBetweenTowPoint($pos[$i]->lat,$pos[$i]->long,$pos[$i+1]->lat,$pos[$i+1]->lat,'m');
+                            }
+                            //update information of trip
+                            $trip->ended = true;
+                            $trip->distance = $distance;
+                            $trip->save();
+                            //discount 10% of cost trip from driver
+                            $balance = $driver->balance;
+                            $balance->amount -= ($trip->cost * 10)/100;
+                            $balance->save();
+                            /// Send notification to user
+                            $this->sendnotification($trip->user->fcm_token,'Trip Ended','Your Trip is Ended now and its cost is :'.$trip->cost);
+                            return  $this->returnSuccessMessage();
+                        }else return $this->returnError('this trip have no points');
                     }else return $this->returnError('this trip already ended');
                 }else return $this->returnError("this trip didn't started yet");
 
