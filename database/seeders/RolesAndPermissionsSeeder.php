@@ -19,11 +19,15 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+<<<<<<< HEAD
         // Create Permissions
         //Manage Admin 
         $CreateAdmin='Create-Admin';
         $DeleteAdmin='Delete-Admin';
         $ChangeBannedAdmin='Change_Banned_Admin';
+=======
+        ////// Define Permissions
+>>>>>>> 5fd102e736f54a530be89c2436de1fa8e40fee88
         //Manage Users
         $GetAllUsers = 'Get-All-Users';
         $GetUser = 'Get-User';
@@ -92,10 +96,14 @@ class RolesAndPermissionsSeeder extends Seeder
 
 
 
+<<<<<<< HEAD
         Permission::create(['guard_name' => 'sanctum','name' => $CreateAdmin]);
         Permission::create(['guard_name' => 'sanctum','name' => $DeleteAdmin]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChangeBannedAdmin]);
 
+=======
+        ////// Create Permissions
+>>>>>>> 5fd102e736f54a530be89c2436de1fa8e40fee88
         Permission::create(['guard_name' => 'sanctum','name' => $GetAllUsers]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetAllDrivers]);
