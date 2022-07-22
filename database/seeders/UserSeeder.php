@@ -36,6 +36,10 @@ class UserSeeder extends Seeder
                     $admin = new Admin();
                     $admin->user_id = $user->id;
                     $admin->save();
+                    $code = new Code();
+                    $code->code = random_int(100000,999999);
+                    $code->user_id = $user->id;
+                    $code->save();
                 }
             );
         User::factory()->count(1)

@@ -20,7 +20,7 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create Permissions
-        //Manage Admin 
+        //Manage Admin
         $CreateAdmin='Create-Admin';
         $DeleteAdmin='Delete-Admin';
         $ChangeBannedAdmin='Change_Banned_Admin';
