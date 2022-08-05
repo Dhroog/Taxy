@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class DriverController extends Controller
 {
@@ -33,6 +34,7 @@ class DriverController extends Controller
         ]);
 
         $user = auth()->user();
+        if( isset($user->jobapplication) )return $this->returnError();
         if( isset($user) )
         {
             // create data
@@ -49,7 +51,7 @@ class DriverController extends Controller
             $jobApplication->image = $imageName;
             $jobApplication->save();
 
-            return $this->returnSuccessMessage();
+            return $this->returnData('Success',$jobApplication->id,'jobApplication_id');
         }else return $this->returnError();
 
 
@@ -117,11 +119,8 @@ class DriverController extends Controller
                     $driver->save();
 
                     ////Create role
-                    $role = new Role_User();
-                    $role->user_id = $user->id;
-                    $role->role_id = 2;
-                    $role->save();
-
+                     $role = Role::findByName('Driver');
+                    $user->assignRole($role);
                     ////update status DriverJobApplication
                     $DriverJobApplication->status = "accept";
                     $DriverJobApplication->save();
