@@ -76,12 +76,12 @@ class DriverController extends Controller
 
     }
 
-    public function GetStatusDriverJobApplication($id): JsonResponse
+    public function GetDriverJobApplication($id): JsonResponse
     {
         $DriverJobApplication = Jobapplication::find($id);
         if(isset($DriverJobApplication))
         {
-            return $this->returnData("Success",$DriverJobApplication->status);
+            return $this->returnData("Success",$DriverJobApplication);
         }else return $this->returnError("JobApplication not found");
     }
 

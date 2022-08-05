@@ -54,7 +54,7 @@ class UserController extends Controller
     // GET ALL USER
     public function AllUsers(): JsonResponse
     {
-        $users = User::paginate(1);
+        $users = User::paginate(15);
         return $this->returnData("get all users",$users);
     }
     //GET USER BY ID

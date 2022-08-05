@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CancellationReasonController;
@@ -114,6 +115,8 @@ Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAc
     Route::get("profile", [UserController::class, "profile"])->middleware("permission:Show-Profile");
     Route::put("UpdateProfile", [UserController::class, "Update"])->middleware("permission:Update-Profile");
     Route::post("DriverJobApplication", [DriverController::class, "DriverJobApplication"])->middleware("permission:Send-Job-Application");
+    route::get('GetDriverJobApplication/{id}',[DriverController::class,'GetDriverJobApplication'])->middleware("permission:Get-Status-Driver-Job-Application");
+
 
 
 
@@ -123,7 +126,6 @@ Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAc
 Route::group(["prefix" => "Driver", "middleware" => ["auth:sanctum", "ActiveAccount","BannedAccount"]], function () {
 
     Route::post("UpdateDriverInfoApplication", [DriverController::class, "UpdateDriverInfoApplication"])->middleware("permission:Send-Update-Driver-Info-Application");
-    route::get('GetStatusDriverJobApplication/{id}',[DriverController::class,'GetStatusDriverJobApplication'])->middleware("permission:Get-Status-Driver-Job-Application");
     Route::post("SendRejectionReason", [RejectionReasonController::class, "SendRejectionReason"])->middleware("permission:Send-Rejection-Reason");
     Route::get('GetDriverBalance/{id}',[BalanceController::class,'GetDriverBalance'])->middleware("permission:Get-Driver-Balance");
     Route::get("StartTrip/{trip_id}", [TripController::class, "StartTrip"])->middleware("permission:Start-Trip");

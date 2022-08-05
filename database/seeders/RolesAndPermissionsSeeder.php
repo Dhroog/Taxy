@@ -168,6 +168,7 @@ class RolesAndPermissionsSeeder extends Seeder
             $ShowProfile,
             $UpdateProfile,
             $SendJobApplication,
+            $GetStatusDriverJobApplication,
             $CreateTrip,
             $ConfirmTrip,
             $GetUserTrips,
@@ -177,7 +178,6 @@ class RolesAndPermissionsSeeder extends Seeder
         );
         Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo(
             $SendUpdateDriverInfoApplication,
-            $GetStatusDriverJobApplication,
             $GetAllTripsDriverCanAccept,
             $GetDriverTrips,
             $GetUserTrips,
