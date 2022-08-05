@@ -78,25 +78,33 @@ class AuthController extends Controller
                 $user->fcm_token = $request->fcm_token;
                 $user->save();
 
-                //store abilities this user in array
-                /*
-                    $abilitys = $user->role;
-                    $arry = array();
-                    foreach ($abilitys as $ability) {
-                        array_push($arry, $ability->name);
-                    }
-                */
+
                 // create a token
                 $token = $user->createToken("auth_token")->plainTextToken;
-                $arry = array(
-                    'access_token' => $token,
-                    'user_id' => $user->id,
-                    'active' => $user->status,
-                    'banned' => $user->banned
-                );
+                $job = $user->jobapplication;
+                if( $user->type == 'customer' && isset($job)) {
+                    $arry = array(
+                            'access_token' => $token,
+                            'user_id' => $user->id,
+                            'type' => $user->type,
+                            'jobapplication_id' => $job->id,
+                            'active' => $user->status,
+                            'banned' => $user->banned
+                        );
+                        /// send a response
+                        return $this->returnData('logged in successfully', $arry);
+                }else {
+                    $arry = array(
+                        'access_token' => $token,
+                        'user_id' => $user->id,
+                        'type' => $user->type,
+                        'active' => $user->status,
+                        'banned' => $user->banned
+                    );
+                    /// send a response
+                    return $this->returnData('logged in successfully', $arry  );
+                }
 
-                /// send a response
-                return $this->returnData('logged in successfully', $arry  );
 
             } else {
 
