@@ -133,10 +133,22 @@ class AuthController extends Controller
             $user = auth()->user();
             $user->status = true;
             $user->save();
-            return $this->returnSuccessMessage( 'Success verifyPhone ');
+            $job = $user->jobapplication;
+            if( $user->type == 'customer' && isset($job)) {
+                $arry = array(
+                    'type' => $user->type,
+                    'jobapplication_id' => $job->id,
+                );
+                /// send a response
+                return $this->returnData('Success verifyPhone', $arry);
+            }else {
+                $arry = array(
+                    'type' => $user->type,
+                );
+                /// send a response
+                return $this->returnData('Success verifyPhone', $arry  );
+            }
         } else return $this->returnError( 'code not correct');
-
-
     }
     /**
      * logout user and delete his token .
