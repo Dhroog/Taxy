@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use App\Models\Reward;
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,11 +33,21 @@ class BalanceController extends Controller
 
     public function GetDriverBalance($id): JsonResponse
     {
-        $driver = Driver::find($id);
-        if(isset($driver))
+        $user = User::find($id);
+        if( isset($user))
         {
-            return $this->returnData('your Balance ',$driver->balance->amount);
+            $driver = $user->driver;
+            if(isset($driver))
+            {
+                $array = array([
+                    'balance' => $driver->balance->amount,
+                    'lastPay' => 10,
+                    'tripsCount' => 15
+                ]);
+                return $this->returnData('your Balance ',$array);
+            }else return $this->returnError('driver not found');
         }else return $this->returnError('driver not found');
+
     }
 
     public function DiscountDriverBalance(Request $request): JsonResponse

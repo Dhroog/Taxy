@@ -71,6 +71,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $DeleteRejectionReason = 'Delete-Rejection-Reason';
         $GetAllRejectionReasons = 'Get-All-Rejection-Reasons';
         $SendRejectionReason = 'Send-Rejection-Reason';
+        ///Driver
+        $GetDriverBalance = 'Get-Driver-Balance';
+        $ChangeStatusDriver = 'Change-Status-Driver';
         ///Manage Trips
         $CreateTrip = 'Create-Trip';
         $ConfirmTrip = 'Confirm-Trip';
@@ -85,7 +88,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $StartTrip = 'Start-Trip';
         $SetTrackingTrip = 'Set-Tracking-Trip';
         $ChargeDriverBalance = 'Charge-Driver-Balance';
-        $GetDriverBalance = 'Get-Driver-Balance';
         $EndTrip = 'End-Trip';
 
 
@@ -149,6 +151,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $SetTrackingTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChargeDriverBalance]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetDriverBalance]);
+        Permission::create(['guard_name' => 'sanctum','name' => $ChangeStatusDriver]);
         Permission::create(['guard_name' => 'sanctum','name' => $EndTrip]);
 
 
@@ -189,7 +192,8 @@ class RolesAndPermissionsSeeder extends Seeder
             $ShowProfile,
             $SetTrackingTrip,
             $GetDriverBalance,
-            $EndTrip
+            $ChangeStatusDriver,
+            $EndTrip,
         );
 
     }

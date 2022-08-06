@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
+
 class AdminController extends Controller
 {
     use GeneralTrait;
@@ -12,19 +15,24 @@ class AdminController extends Controller
     {
         $request->validate([
             "name" => "required|string",
-            "email" => "required|string",
-            "status" => "required",
-            "banned" => "required",
+            "phone" => "required|size:10|unique:users",
             "image" => "required",
-            "password" => "required",
+            "password" => "required|confirmed"
         ]);
+        $imageName = time().'.'.$request->image->extension();
+        $request->image->move(public_path('Images/User'), $imageName);
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->status = true;
+        $user->image = $imageName;
+        $user->type = 'admin';
+        $user->password = Hash::make($request->password);
+        $user->save();
+
         $admin = new Admin();
-        $admin->name = $request->name;
-        $admin->email = $request->email;
-        $admin->status = $request->status;
-        $admin->banned = $request->banned;
-        $admin->image = $request->image;
-        $admin->password = $request->password;
+        $admin->user_id = $user->id;
         $admin->save();
         return $this->returnSuccessMessage();
     }
@@ -33,31 +41,26 @@ class AdminController extends Controller
     {
         $request->validate([
             "id" => "required",
-            "banned" => "required",
+            "banned" => "required|boolean",
         ]);
-        $admin=Admin::find($request->id);
-        if( isset($admin) )
+        $user = User::find($request->id);
+        if( isset($user) )
         {
+            $user->banned = $request->banned;
+            $user->save();
             return $this->returnSuccessMessage();
-        }else return $this->returnError("admin not found");
+        }else return $this->returnError("user not found");
     }
-    // public function edit(Request $request): \Illuminate\Http\JsonResponse
-    // {
-    //     $request->validate([
-    //     ]);
-    //     $admin=Admin::find($request->id);
-    //     if( isset($admin) )
-    //     {
-    //         return $this->returnSuccessMessage();
-    //     }else return $this->returnError("admin not found");
-    // }
+
 
     public function delete($id): \Illuminate\Http\JsonResponse
     {
-        $admin = Admin::find($id);
-        if( isset($admin) )
+        $user = User::find($id);
+        if( isset($user) )
         {
+            $admin = $user->admin;
             $admin->delete();
+            $user->delete();
             return $this->returnSuccessMessage();
         }else return $this->returnError("admin not found");
     }
