@@ -11,7 +11,7 @@ class Jobapplication extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['name','surname','age','phone','carmodel','carcolor','carnumber','status','image'];
+    protected $fillable = ['name','surname','age','carmodel','carcolor','carnumber','status','image','image_car'];
 
     protected function image(): Attribute
     {
