@@ -30,7 +30,8 @@ class DriverController extends Controller
             "carmodel" => "string",
             "carcolor" => "string",
             "carnumber" => "string|size:8|unique:jobapplications",
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            'image_car' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
         ]);
 
         $user = auth()->user();
@@ -39,7 +40,10 @@ class DriverController extends Controller
         {
             // create data
             $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('Images/Cars'), $imageName);
+            $request->image->move(public_path('Images/User'), $imageName);
+
+            $image_carName = time().'.'.$request->image_car->extension();
+            $request->image_car->move(public_path('Images/Cars'), $image_carName);
 
             $jobApplication = new Jobapplication();
             $jobApplication->user_id = $user->id;
@@ -49,6 +53,7 @@ class DriverController extends Controller
             $jobApplication->carcolor = $request->carcolor;
             $jobApplication->carnumber = $request->carnumber;
             $jobApplication->image = $imageName;
+            $jobApplication->image_car = $image_carName;
             $jobApplication->save();
 
             return $this->returnData('Success',$jobApplication->id,'jobApplication_id');
@@ -115,6 +120,7 @@ class DriverController extends Controller
                     $driver = new Driver();
                     $driver->user_id = $user->id;
                     $driver->surname = $DriverJobApplication->surname;
+                    $driver->image = $DriverJobApplication->image;
                     $driver->age = $DriverJobApplication->age;
                     $driver->save();
 
@@ -132,7 +138,7 @@ class DriverController extends Controller
                     $car->model = $DriverJobApplication->carmodel;
                     $car->color = $DriverJobApplication->carcolor;
                     $car->number = $DriverJobApplication->carnumber;
-                    $car->image = $DriverJobApplication->image;
+                    $car->image = $DriverJobApplication->image_car;
                     $car->save();
 
                     $this->sendnotification($user->fcm_token,"Accept your Job Application","Welcome! we are delighted you've decided to join our company. we are confident that you will bring fresh insights and great work to our team. ");
@@ -234,7 +240,7 @@ class DriverController extends Controller
                     if(isset($InfoApplication->name))
                     $user->name = $InfoApplication->name;
                     if( isset( $info->image_driver ) )
-                        $user->image = $info->image_driver;
+                        $driver->image = $info->image_driver;
                     $user->save();
 
                     ////update car

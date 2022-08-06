@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('surname');
             $table->integer('age');
+            $table->string('image')->nullable();
             $table->boolean('available')->default(false);
             $table->float('lat')->default(0);
             $table->float('long')->default(0);

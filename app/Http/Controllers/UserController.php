@@ -122,15 +122,8 @@ class UserController extends Controller
     //test
     public function test($id): JsonResponse
     {
-        $trip = Trip::find($id);
-        $pos = $trip->position;
-        $distance = 0;
-        for($i = 0 ; $i <  count($pos)-1 ; $i++ )
-        {
-            $distance += $this->DistanceBetweenTowPoint($pos[$i]->lat,$pos[$i]->long,$pos[$i+1]->lat,$pos[$i+1]->lat,'k');
-        }
-        //$distance = $this->DistanceBetweenTowPoint(0,0,50,50,'m');
-        return $this->returnData('what',$distance);
+        $user = User::all();
+        return $this->returnData('all user',$user);
     }
 }
 
