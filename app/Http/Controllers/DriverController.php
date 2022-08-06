@@ -275,14 +275,19 @@ class DriverController extends Controller
     public function ChangeStatusDriver(Request $request): JsonResponse
     {
         $request->validate([
-            'status' => 'required|bool'
+            'status' => 'required|bool',
+            'lat' => 'required',
+            'lng' => 'required'
         ]);
 
         $driver = auth()->user()->driver;
         if(isset($driver))
         {
             $driver->available = $request->status;
+            $driver->lat = $request->lat;
+            $driver->long = $request->lng;
             $driver->save();
+            return $this->returnSuccessMessage();
         }else return $this->returnError();
     }
 }

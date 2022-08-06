@@ -61,7 +61,7 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
   /////////////////////////////////////////////////CREATE ADMIN API////////////////////////////////////////////////////////
     Route::post('CreateAdmin',[AdminController::class,'create'])->middleware("permission:Create-Admin");
     Route::Delete("DeleteAdmin/{id}", [AdminController::class, "delete"])->middleware("permission:Delete-Admin");
-    Route::get('CreateAdmin',[AdminController::class,'changeBannedState'])->middleware("permission:Change_Banned_Admin");
+    Route::post('changeBannedState',[AdminController::class,'changeBannedState'])->middleware("permission:Change_Banned_Admin");
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Route::get("users", [UserController::class, "AllUsers"])->middleware("permission:Get-All-Users");
     Route::get("drivers", [DriverController::class, "AllDrivers"])->middleware("permission:Get-All-Drivers");

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone')->unique();
-            $table->boolean('status');
+            $table->boolean('status')->default(false);
             $table->boolean('banned')->default(false);
             $table->string('image')->nullable();;
             $table->string('password');
