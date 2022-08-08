@@ -122,8 +122,9 @@ class UserController extends Controller
     //test
     public function test($id): JsonResponse
     {
-        $user = User::all();
-        return $this->returnData('all user',$user);
+        $admin = User::select('fcm_token')->where('type','=','admin')->get();
+        foreach ($admin as $a)return $this->returnData('a',$a->fcm_token);
+        return $this->returnData('all user',$admin);
     }
 }
 

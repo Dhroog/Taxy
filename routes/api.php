@@ -6,6 +6,7 @@ use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\CancellationReasonController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RejectionReasonController;
 use App\Http\Controllers\RolesPermissionController;
 use App\Http\Controllers\TripController;
@@ -97,6 +98,9 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('ChargeDriverBalance',[BalanceController::class,'ChargeDriverBalance'])->middleware("permission:Charge-Driver-Balance");
     Route::post('DiscountDriverBalance',[BalanceController::class,'DiscountDriverBalance'])->middleware("permission:Discount-Driver-Balance");
     Route::post('RewardDriverBalance',[BalanceController::class,'RewardDriverBalance'])->middleware("permission:Reward-Driver-Balance");
+    Route::post('SendNotificationAll',[NotificationController::class,'SendNotificationAll'])->middleware("permission:Send-Notification-All");
+    Route::post('SendNotificationByID',[NotificationController::class,'SendNotificationByID'])->middleware("permission:Send-Notification-By-ID");
+
 
 
 
