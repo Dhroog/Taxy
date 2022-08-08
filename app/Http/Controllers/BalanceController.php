@@ -39,10 +39,11 @@ class BalanceController extends Controller
             $driver = $user->driver;
             if(isset($driver))
             {
+                $trips = $driver->trips()->latest('id')->first();
                 $array = array([
                     'balance' => $driver->balance->amount,
-                    'lastPay' => 10,
-                    'tripsCount' => 15
+                    'lastPay' => $trips->cost,
+                    'tripsCount' => $trips->count()
                 ]);
                 return $this->returnData('your Balance ',$array);
             }else return $this->returnError('driver not found');

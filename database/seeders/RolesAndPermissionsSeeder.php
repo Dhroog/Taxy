@@ -89,6 +89,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $SetTrackingTrip = 'Set-Tracking-Trip';
         $ChargeDriverBalance = 'Charge-Driver-Balance';
         $EndTrip = 'End-Trip';
+        ///Notification
+        $SendNotificationAll = 'Send-Notification-All';
+        $SendNotificationByID = 'Send-Notification-By-ID';
 
 
 
@@ -153,6 +156,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $GetDriverBalance]);
         Permission::create(['guard_name' => 'sanctum','name' => $ChangeStatusDriver]);
         Permission::create(['guard_name' => 'sanctum','name' => $EndTrip]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendNotificationAll]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendNotificationByID]);
 
 
 

@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Array_;
 
 class TripController extends Controller
 {
@@ -54,9 +55,11 @@ class TripController extends Controller
         foreach ($categories as $category) {
             $category->price = $category->cost * $trip->distance;
         }
-        $categories->put('trip_id', $trip->id);
-
-        return $this->returnData('all categories with cost', $categories);
+        $array = array([
+            'trip_id' => $trip->id,
+            'categories' => $categories
+        ]);
+        return $this->returnData('all categories with cost', $array);
 
     }
 
@@ -263,7 +266,7 @@ class TripController extends Controller
                     $pos->save();
                     ///attach pos with trip
                     $trip->position()->save($pos);
-                    $notification = 'Lat : '.$pos->lat.'                    Long : '.$pos->long;
+                    $notification = 'Lat : '.$pos->lat.'                Long : '.$pos->long;
                     $this->sendnotification($trip->user->fcm_token,'Tracking Trip',$notification);
                     return $this->returnSuccessMessage();
                 }return $this->returnError("this trip isn't started yet");
