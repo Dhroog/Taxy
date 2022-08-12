@@ -96,10 +96,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Trip::class);
     }
 
-    public function notifications(): HasMany
+    public function notifications(): BelongsToMany
     {
-        return $this->hasMany(Notification::class);
+        return $this->belongsToMany(Notification::class,'user_have_notifications');
     }
+
+
 
 
 }

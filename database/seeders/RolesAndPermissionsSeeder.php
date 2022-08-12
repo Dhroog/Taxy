@@ -92,6 +92,8 @@ class RolesAndPermissionsSeeder extends Seeder
         ///Notification
         $SendNotificationAll = 'Send-Notification-All';
         $SendNotificationByID = 'Send-Notification-By-ID';
+        $GetAllUsersForNotification = 'Get-All-Users-For-Notification';
+        $GetAllNotificationsForUser = 'Get-All-Notifications-For-User';
 
 
 
@@ -158,6 +160,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $EndTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $SendNotificationAll]);
         Permission::create(['guard_name' => 'sanctum','name' => $SendNotificationByID]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllUsersForNotification]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetAllNotificationsForUser]);
 
 
 

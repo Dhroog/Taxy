@@ -112,7 +112,7 @@ class AuthController extends Controller
             }
         } else {
 
-            return $this->returnError( "Username incorrect");
+            return $this->returnError( "phone incorrect");
 
         }
     }
