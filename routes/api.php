@@ -100,6 +100,10 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('RewardDriverBalance',[BalanceController::class,'RewardDriverBalance'])->middleware("permission:Reward-Driver-Balance");
     Route::post('SendNotificationAll',[NotificationController::class,'SendNotificationAll'])->middleware("permission:Send-Notification-All");
     Route::post('SendNotificationByID',[NotificationController::class,'SendNotificationByID'])->middleware("permission:Send-Notification-By-ID");
+    Route::get('GetAllUsersForNotification/{id}',[NotificationController::class,'GetAllUsersForNotification'])->middleware("permission:Get-All-Users-For-Notification");
+    Route::get('GetAllNotificationsForUser/{id}',[NotificationController::class,'GetAllNotificationsForUser'])->middleware("permission:Get-All-Notifications-For-User");
+
+
 
 
 

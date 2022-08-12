@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Code;
 use App\Models\Driver;
 use App\Models\image;
+use App\Models\Notification;
 use App\Models\Trip;
 use App\Models\User;
 use App\Services\FCMService;
@@ -122,9 +123,10 @@ class UserController extends Controller
     //test
     public function test($id): JsonResponse
     {
-        $admin = User::select('fcm_token')->where('type','=','admin')->get();
-        foreach ($admin as $a)return $this->returnData('a',$a->fcm_token);
-        return $this->returnData('all user',$admin);
+
+        $noti = Notification::find($id);
+        $user = $noti->user;
+        return $this->returnData('success',$user);
     }
 }
 
