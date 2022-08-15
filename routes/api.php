@@ -116,6 +116,8 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
 
 
 
+
+
 });
 ///////////////////////////////////////customer api///////////////////////////////////////////////////////////////
 Route::group(["prefix" => "customer", "middleware" => ["auth:sanctum", "ActiveAccount","BannedAccount"]], function () {
@@ -162,6 +164,10 @@ Route::group(["prefix" => "Trip", "middleware" => ["auth:sanctum", "ActiveAccoun
     Route::get("AcceptTrip/{id}", [TripController::class, "AcceptTrip"])->middleware("permission:Accept-Trip");
     Route::post("SendCancellationReason", [CancellationReasonController::class, "SendCancellationReason"])->middleware("permission:Send-Cancellation-Reason");
     Route::post("SetTrackingTrip/{id}", [TripController::class, "SetTrackingTrip"])->middleware("permission:Set-Tracking-Trip");
+    Route::post('SendRate',[TripController::class,'SendRate'])->middleware("permission:Send-Rate");
+    Route::get("GetMyActiveTrip", [TripController::class, "GetMyActiveTrip"])->middleware("permission:Get-My-Active-Trip");
+    Route::get("GetReasonsCancellationForTrip/{id}", [TripController::class, "GetReasonsCancellationForTrip"])->middleware("permission:Get-Reasons-Cancellation-For-Trip");
+
 
 
 

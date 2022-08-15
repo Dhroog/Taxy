@@ -33,6 +33,15 @@ class TripController extends Controller
         here check if trips is dummy
         */
         $user = auth()->user();
+        ///check if user have another trip starting
+        $trips = Trip::where([
+            ['user_id', '=', $user->id],
+            ['started', '=', true]
+        ])->orwhere([
+            ['user_id', '=', $user->id],
+            ['confirmed', '=', false]
+        ])->get();
+        if(!$trips->isEmpty())return $this->returnError('you already have trip');
         $trip = new Trip();
             $trip->user_id = $user->id;
             $trip->customer_name = $user->name;
@@ -83,6 +92,7 @@ class TripController extends Controller
             $trip->confirmed = true;
             $trip->category_id = $request->category_id;
             $trip->save();
+            $trip->refresh();
             ///////get all available drivers
             $drivers = Driver::where('available', true)->get();
             foreach ($drivers as $driver) {
@@ -220,6 +230,7 @@ class TripController extends Controller
                         $driver = auth()->user()->driver;
                         if(isset($driver))
                         {
+                            if( $driver->available == false )return $this->returnError('driver busy');
                             ///change status of Driver
                             $driver->available = false;
                             $driver->save();
@@ -338,6 +349,7 @@ class TripController extends Controller
                                     $distance += $this->DistanceBetweenTowPoint($pos[$i]->lat,$pos[$i]->long,$pos[$i+1]->lat,$pos[$i+1]->lat,'m');
                             }
                             //update information of trip
+                            $trip->started = false;
                             $trip->ended = true;
                             $trip->distance = $distance;
                             $trip->save();
@@ -355,6 +367,66 @@ class TripController extends Controller
             }else return $this->returnError('trip not found');
 
         }else return $this->returnError('you are not driver');
+    }
+
+    public function  SendRate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'trip_id' => 'required|int',
+            'rate' => 'required|min:1|max:10'
+        ]);
+
+        $user = auth()->user();
+        $trip = Trip::find($request->trip_id);
+        if(isset($trip)){
+            if( $trip->user_id == $user->id){
+                if( $trip->customer_rate == 0 ) {
+                    $trip->customer_rate = $request->rate;
+                    $trip->save();
+                    return $this->returnSuccessMessage();
+                }else return $this->returnError('you rated this trip');
+            }else if( $trip->driver_id == $user->driver->id){
+                if( $trip->driver_rate == 0 ) {
+                $trip->driver_rate = $request->rate;
+                $trip->save();
+                return $this->returnSuccessMessage();
+                }else return $this->returnError('you rated this trip');
+            }else return $this->returnError();
+        }else return $this->returnError('trip not found');
+    }
+
+    public function GetMyActiveTrip(){
+        $user = auth()->user();
+        if(isset($user)){
+            if( $user->type == 'driver' ){
+                $trip = Trip::where([
+                    ['driver_id','=',$user->driver->id],
+                    ['canceled','=',false],
+                    ['ended','=',false],
+                    ['confirmed','=',true],
+                ])->get();
+                if($trip->isEmpty()) return $this->returnData('active trip',null);
+                else return $this->returnData('active trip',$trip);
+
+            }else{
+                $trip = Trip::where([
+                    ['user_id','=',$user->id],
+                    ['canceled','=',false],
+                    ['ended','=',false],
+                    ['confirmed','=',true],
+                ])->get();
+                if($trip->isEmpty()) return $this->returnData('active trip',null);
+                else return $this->returnData('active trip',$trip);
+            }
+        }else return $this->returnError('user not found');
+    }
+
+    public function GetReasonsCancellationForTrip($id){
+        $trip = Trip::find($id);
+        if(isset($trip)){
+            $reasons = $trip->Cancellation_reason;
+            return $this->returnData('Reasons Cancellation',$reasons);
+        }else return $this->returnError('trip not found');
     }
 
 

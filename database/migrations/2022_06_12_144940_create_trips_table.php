@@ -40,6 +40,8 @@ return new class extends Migration
             $table->string('driver_name')->nullable();
             $table->string('driver_phone')->nullable();
             $table->string('driver_image')->nullable();
+            $table->double('driver_rate')->default(0);
+            $table->double('customer_rate')->default(0);
             $table->timestamps();
             $table->softDeletes();
            // $table->foreign("driver_id")->references('id')->on('drivers')->onDelete('cascade');
