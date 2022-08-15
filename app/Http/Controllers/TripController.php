@@ -145,7 +145,7 @@ class TripController extends Controller
 
     public function GetAllTrips(): JsonResponse
     {
-        $trips = Trip::paginate(15);
+        $trips = Trip::all();//paginate(15);
         if(isset($trips))
         {
             return $this->returnData('all trips ',$trips);
@@ -192,7 +192,7 @@ class TripController extends Controller
         $user = User::find($id);
         if(isset($user))
         {
-            $trips = $user->trips()->paginate(15);
+            $trips = $user->trips();//->paginate(15);
             return $this->returnData('user trips',$trips);
         }else return $this->returnError('User not found');
     }
@@ -202,14 +202,14 @@ class TripController extends Controller
         $driver = Driver::find($id);
         if(isset($driver))
         {
-            $trips = $driver->trips()->paginate(15);
+            $trips = $driver->trips();//->paginate(15);
             return $this->returnData('driver trips',$trips);
         }else return $this->returnError('driver not found');
     }
 
     public function GetAllActiveTrips(): JsonResponse
     {
-        $trips = Trip::where('started','=',true)->paginate(15);
+        $trips = Trip::where('started','=',true);//->paginate(15);
         if(isset($trips))
         {
             return $this->returnData('all trips ',$trips);
@@ -421,7 +421,8 @@ class TripController extends Controller
         }else return $this->returnError('user not found');
     }
 
-    public function GetReasonsCancellationForTrip($id){
+    public function GetReasonsCancellationForTrip($id): JsonResponse
+    {
         $trip = Trip::find($id);
         if(isset($trip)){
             $reasons = $trip->Cancellation_reason;

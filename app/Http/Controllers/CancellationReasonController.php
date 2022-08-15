@@ -90,7 +90,8 @@ class CancellationReasonController extends Controller
     {
         $request->validate([
            'trip_id' => 'required|int',
-           'cancellation_id'=>'required'
+           'cancellation_id'=>'required',
+            'notice' => 'string'
         ]);
 
         $trip = Trip::find($request->trip_id);
@@ -103,6 +104,7 @@ class CancellationReasonController extends Controller
 
                     //update trip
                     $trip->canceled = true;
+                    $trip->notice_cancele = $request->notice;
                     $trip->save();
                     //send notification to driver
                     if($trip->accepted)
