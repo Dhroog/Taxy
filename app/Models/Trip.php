@@ -30,7 +30,7 @@ class Trip extends Model
         'canceled',
         'confirmed',
         'started',
-        'delved'
+        'ended'
     ];
 
     public function driver(): BelongsTo

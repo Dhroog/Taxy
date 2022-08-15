@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SearchAboutDriver;
 use App\Models\Code;
 use App\Models\Driver;
 use App\Models\image;
@@ -12,8 +13,10 @@ use App\Services\FCMService;
 use App\Traits\GeneralTrait;
 use Carbon\Carbon;
 use http\Env\Response;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 
@@ -123,10 +126,9 @@ class UserController extends Controller
     //test
     public function test($id): JsonResponse
     {
-
-        $noti = Notification::find($id);
-        $user = $noti->user;
-        return $this->returnData('success',$user);
+        SearchAboutDriver::dispatch(1,1);
+        //Artisan::call('schedule:work');
+        return $this->returnSuccessMessage();
     }
 }
 
