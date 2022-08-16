@@ -43,6 +43,9 @@ return new class extends Migration
             $table->double('driver_rate')->default(0);
             $table->double('customer_rate')->default(0);
             $table->string('notice_cancele')->nullable();
+            $table->string('car_color')->nullable();
+            $table->string('car_number')->nullable();
+            $table->string('car_model')->nullable();
             $table->timestamps();
             $table->softDeletes();
            // $table->foreign("driver_id")->references('id')->on('drivers')->onDelete('cascade');

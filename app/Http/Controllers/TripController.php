@@ -39,7 +39,12 @@ class TripController extends Controller
             ['started', '=', true]
         ])->orwhere([
             ['user_id', '=', $user->id],
-            ['confirmed', '=', false]
+            ['confirmed', '=', true],
+            ['canceled','=',false]
+        ])->orwhere([
+            ['user_id', '=', $user->id],
+            ['confirmed', '=', false],
+            ['canceled','=',false]
         ])->get();
         if(!$trips->isEmpty())return $this->returnError('you already have trip');
         $trip = new Trip();
@@ -121,7 +126,11 @@ class TripController extends Controller
                     */
                     ////send notification to driver
                     if ($rejections->isEmpty()) {
-                        $this->sendnotification($driver->user->fcm_token, 'Trip Available ', 'there a new trip you can accept it');
+                        $body = array([
+                           'message' => 'there a new trip you can accept it',
+                           'trip_id' => $trip->id
+                        ]);
+                        $this->sendnotification($driver->user->fcm_token, 'Trip Available ', json_encode($body));
                         $countOfDriverFound++;
                     }
                 }
@@ -236,15 +245,23 @@ class TripController extends Controller
                             $driver->save();
                             //store rest information of driver in $user
                             $user = $driver->user;
+                            $car = $driver->car;
                             ////update trips
                             $trip->accepted = true;
                             $trip->driver_id = $driver->id;
                             $trip->driver_name = $user->name;
                             $trip->driver_phone = $user->phone;
                             $trip->driver_image = $user->image;
+                            $trip->car_number = $car->number;
+                            $trip->car_color = $car->color;
+                            $trip->car_model = $car->model;
                             $trip->save();
                             //send notification to client
-                            $this->sendnotification($trip->user->fcm_token,'Trip Accepted','your trip is accepted you can check it  in app ');
+                            $body = array([
+                                'message'=> 'your trip is accepted you can check it  in app ',
+                                'trip_id' => $trip->id
+                            ]);
+                            $this->sendnotification($trip->user->fcm_token,'Trip Accepted',json_encode($body));
                             return $this->returnData('trip is accepted',$trip);
 
                         }else return $this->returnError('your are not driver');
@@ -277,8 +294,13 @@ class TripController extends Controller
                     $pos->save();
                     ///attach pos with trip
                     $trip->position()->save($pos);
-                    $notification = 'Lat : '.$pos->lat.'                Long : '.$pos->long;
-                    $this->sendnotification($trip->user->fcm_token,'Tracking Trip',$notification);
+                    $body = array([
+                        'message' => 'location your trip now',
+                        'trip_id' => $trip->id,
+                        'lat' => $pos->lat,
+                        'lng' => $pos->long
+                    ]);
+                    $this->sendnotification($trip->user->fcm_token,'Tracking Trip',json_encode($body));
                     return $this->returnSuccessMessage();
                 }return $this->returnError("this trip isn't started yet");
             }else return $this->returnError('this trip is ended');
@@ -306,7 +328,11 @@ class TripController extends Controller
                     {
                         $trip->started = true;
                         $trip->save();
-                        $this->sendnotification($trip->user->fcm_token,'Trip Started','Your Trip is started now ');
+                        $body = array([
+                            'message' => 'Your Trip is started now ',
+                            'trip_id' => $trip->id
+                        ]);
+                        $this->sendnotification($trip->user->fcm_token,'Trip Started',json_encode($body));
                         return  $this->returnSuccessMessage('trip is started now');
                     }else return $this->returnError('this trip is cancel');
                 }else return $this->returnError('this trip already started');
@@ -358,7 +384,11 @@ class TripController extends Controller
                             $balance->amount -= ($trip->cost * 10)/100;
                             $balance->save();
                             /// Send notification to user
-                            $this->sendnotification($trip->user->fcm_token,'Trip Ended','Your Trip is Ended now and its cost is :'.$trip->cost);
+                            $body = array([
+                               'message' => 'Your Trip is Ended now and its cost is :'.$trip->cost,
+                               'trip_id' => $trip->id
+                            ]);
+                            $this->sendnotification($trip->user->fcm_token,'Trip Ended',json_encode($body));
                             return  $this->returnSuccessMessage();
                         }else return $this->returnError('this trip have no points');
                     }else return $this->returnError('this trip already ended');
@@ -373,7 +403,7 @@ class TripController extends Controller
     {
         $request->validate([
             'trip_id' => 'required|int',
-            'rate' => 'required|min:1|max:10'
+            'rate' => 'required|int|min:1|max:5'
         ]);
 
         $user = auth()->user();
@@ -394,8 +424,30 @@ class TripController extends Controller
             }else return $this->returnError();
         }else return $this->returnError('trip not found');
     }
+    public function GetRate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'trip_id'=>'required|int',
+            'type' => 'required|string'
+        ]);
+        $trip = Trip::find($request->trip_id);
+        if(isset($trip)){
+            if($request->type == 'driver'){
+                $rate = $trip->driver_rate;
+            }else if($request->type == 'customer'){
+                $rate = $trip->customer_rate;
+            }else {
+                $rate = ($trip->driver_rate + $trip->customer_rate)/2;
+            }
 
-    public function GetMyActiveTrip(){
+            if($rate == 0 ) return $this->returnData('this trip not rated',$rate);
+            else return $this->returnData('rate for trip',$rate);
+
+        }else return $this->returnError('trip not found');
+    }
+
+    public function GetMyActiveTrip(): JsonResponse
+    {
         $user = auth()->user();
         if(isset($user)){
             if( $user->type == 'driver' ){
@@ -425,6 +477,7 @@ class TripController extends Controller
     {
         $trip = Trip::find($id);
         if(isset($trip)){
+            //if($reasons->isEmpty()) return $this->returnError();
             $reasons = $trip->Cancellation_reason;
             return $this->returnData('Reasons Cancellation',$reasons);
         }else return $this->returnError('trip not found');
