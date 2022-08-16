@@ -2,23 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SearchAboutDriver;
-use App\Models\Code;
-use App\Models\Driver;
-use App\Models\image;
-use App\Models\Notification;
-use App\Models\Trip;
+use App\Models\Note;
 use App\Models\User;
-use App\Services\FCMService;
 use App\Traits\GeneralTrait;
-use Carbon\Carbon;
-use http\Env\Response;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Hash;
-use Mail;
+
 
 class UserController extends Controller
 {
@@ -126,8 +115,26 @@ class UserController extends Controller
     //test
     public function test($id): JsonResponse
     {
-        SearchAboutDriver::dispatch(1,1);
-        //Artisan::call('schedule:work');
+        $user = User::find($id);
+
+        $array = array([
+            'message'=>'your trip is accept',
+            'trip_id'=>$user->id
+        ]);
+
+        $this->sendnotification($user->fcm_token,'test',json_encode($array));
+        return $this->returnData('rr',$user);
+    }
+    public function SendNote(Request $request): JsonResponse
+    {
+        $request->validate([
+            'body' => 'required|string'
+        ]);
+        $note = new Note();
+        $note->user_id = auth()->user()->id;
+        $note->title = $request->title;
+        $note->body = $request->body;
+        $note->save();
         return $this->returnSuccessMessage();
     }
 }

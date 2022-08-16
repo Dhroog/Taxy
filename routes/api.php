@@ -51,6 +51,8 @@ Route::group(["prefix" => "", "middleware" => ["auth:sanctum"]], function () {
     Route::post("UploadImage", [UserController::class, "UploadImage"]);
     Route::get("GetImageById/{id}", [UserController::class, "GetImageById"]);
     Route::get("logout", [AuthController::class, "logout"]);
+    Route::post("SendNote", [UserController::class, "SendNote"])->middleware("permission:Send-Note");
+
 
 
 
@@ -102,6 +104,16 @@ Route::group(["prefix" => "admin", "middleware" => ["auth:sanctum", "ActiveAccou
     Route::post('SendNotificationByID',[NotificationController::class,'SendNotificationByID'])->middleware("permission:Send-Notification-By-ID");
     Route::get('GetAllUsersForNotification/{id}',[NotificationController::class,'GetAllUsersForNotification'])->middleware("permission:Get-All-Users-For-Notification");
     Route::get('GetAllNotificationsForUser/{id}',[NotificationController::class,'GetAllNotificationsForUser'])->middleware("permission:Get-All-Notifications-For-User");
+    Route::post('ChangePasswordFromAdmin',[AdminController::class,'ChangePasswordFromAdmin'])->middleware("permission:Change-Password-From-Admin");
+    Route::post('InsertSocialMedia',[AdminController::class,'InsertSocialMedia'])->middleware("permission:Insert-Social-Media");
+    Route::post('EditSocialMedia',[AdminController::class,'EditSocialMedia'])->middleware("permission:Edit-Social-Media");
+    Route::get('GetSocialMedia',[AdminController::class,'GetSocialMedia'])->middleware("permission:Get-Social-Media");
+    Route::get("GetNotes", [AdminController::class, "GetNotes"])->middleware("permission:Get-Notes");
+    Route::get("GetNotesForUser/{id}", [AdminController::class, "GetNotesForUser"])->middleware("permission:Get-Notes-For-User");
+
+
+
+
 
 
 
@@ -165,6 +177,7 @@ Route::group(["prefix" => "Trip", "middleware" => ["auth:sanctum", "ActiveAccoun
     Route::post("SendCancellationReason", [CancellationReasonController::class, "SendCancellationReason"])->middleware("permission:Send-Cancellation-Reason");
     Route::post("SetTrackingTrip", [TripController::class, "SetTrackingTrip"])->middleware("permission:Set-Tracking-Trip");
     Route::post('SendRate',[TripController::class,'SendRate'])->middleware("permission:Send-Rate");
+    Route::post('GetRate',[TripController::class,'GetRate'])->middleware("permission:Get-Rate");
     Route::get("GetMyActiveTrip", [TripController::class, "GetMyActiveTrip"])->middleware("permission:Get-My-Active-Trip");
     Route::get("GetReasonsCancellationForTrip/{id}", [TripController::class, "GetReasonsCancellationForTrip"])->middleware("permission:Get-Reasons-Cancellation-For-Trip");
 

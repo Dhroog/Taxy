@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
                     $user->banned = false;
                     $user->password = Hash::make('driver');
                     $user->status = true;
-                    $user->fcm_token = 'cw7BskxnSZKu1UAQd6hIIh:APA91bE74j1vRVX5uuRDBoeRzFhFqWB5Ep8WH_8ZzcDYSPfnNQ5wYyGaiTm8k9cKbWm5gcLcOfV7ruyun02EWcpvxaDgW0ci0iC1AXRHfcLrN7CrWyE3muGj4Pv5XkE9P7Vh_l-5DXQB';
+                    $user->fcm_token = 'ff1DlaTMTJGB5U1B-upDe0:APA91bFmUAhRQB8rec0siaKZQv8gNMwAF50AuGxqiRjnSSdxBy6x1ESl1ostnA8gnDrnGQ2iM2-I0Cx4dsGMMfHTW66lFAY3s5F_E3jbcMj0hjrtgec_reJVhBXbu-bl46HOk7QNe--c';
                     $user->save();
                     $code = new Code();
                     $code->code = random_int(100000,999999);
@@ -83,7 +83,7 @@ class UserSeeder extends Seeder
                     $user->password = Hash::make('customer');
                     $user->status = true;
                     $user->banned = false;
-                    $user->fcm_token = 'cw7BskxnSZKu1UAQd6hIIh:APA91bE74j1vRVX5uuRDBoeRzFhFqWB5Ep8WH_8ZzcDYSPfnNQ5wYyGaiTm8k9cKbWm5gcLcOfV7ruyun02EWcpvxaDgW0ci0iC1AXRHfcLrN7CrWyE3muGj4Pv5XkE9P7Vh_l-5DXQB';
+                    $user->fcm_token = 'ff1DlaTMTJGB5U1B-upDe0:APA91bFmUAhRQB8rec0siaKZQv8gNMwAF50AuGxqiRjnSSdxBy6x1ESl1ostnA8gnDrnGQ2iM2-I0Cx4dsGMMfHTW66lFAY3s5F_E3jbcMj0hjrtgec_reJVhBXbu-bl46HOk7QNe--c';
                     $user->save();
                     $code = new Code();
                     $code->code = random_int(100000,999999);

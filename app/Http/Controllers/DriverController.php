@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Balance;
 use App\Models\Car;
 use App\Models\Driver;
 use App\Models\Jobapplication;
@@ -123,6 +124,11 @@ class DriverController extends Controller
                     $driver->image = $DriverJobApplication->image;
                     $driver->age = $DriverJobApplication->age;
                     $driver->save();
+
+                    $balance = new Balance();
+                    $balance->amount = 30000;
+                    $balance->driver_id = $driver->id;
+                    $balance->save();
 
                     ////Create role
                      $role = Role::findByName('Driver');

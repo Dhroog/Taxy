@@ -28,6 +28,7 @@ class RolesAndPermissionsSeeder extends Seeder
         //Manage Users
         $GetAllUsers = 'Get-All-Users';
         $GetUser = 'Get-User';
+        $ChangePasswordFromAdmin = 'Change-Password-From-Admin';
         //Manage Drivers
         $GetAllDrivers = 'Get-All-Drivers';
         //Manage Job Application
@@ -91,11 +92,21 @@ class RolesAndPermissionsSeeder extends Seeder
         $EndTrip = 'End-Trip';
         $GetMyActiveTrip = 'Get-My-Active-Trip';
         $GetReasonsCancellationForTrip = "Get-Reasons-Cancellation-For-Trip";
+        $SendRate = 'Send-Rate';
+        $GetRate ='Get-Rate';
         ///Notification
         $SendNotificationAll = 'Send-Notification-All';
         $SendNotificationByID = 'Send-Notification-By-ID';
         $GetAllUsersForNotification = 'Get-All-Users-For-Notification';
         $GetAllNotificationsForUser = 'Get-All-Notifications-For-User';
+        ///Social Media
+        $InsertSocialMedia = 'Insert-Social-Media';
+        $EditSocialMedia = 'Edit-Social-Media';
+        $GetSocialMedia = 'Get-Social-Media';
+        ///note
+        $SendNote = 'Send-Note';
+        $GetNotes = 'Get-Notes';
+        $GetNotesForUser = 'Get-Notes-For-User';
 
 
 
@@ -167,6 +178,15 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['guard_name' => 'sanctum','name' => $GetAllNotificationsForUser]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetMyActiveTrip]);
         Permission::create(['guard_name' => 'sanctum','name' => $GetReasonsCancellationForTrip]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendRate]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetRate]);
+        Permission::create(['guard_name' => 'sanctum','name' => $ChangePasswordFromAdmin]);
+        Permission::create(['guard_name' => 'sanctum','name' => $InsertSocialMedia]);
+        Permission::create(['guard_name' => 'sanctum','name' => $EditSocialMedia]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetSocialMedia]);
+        Permission::create(['guard_name' => 'sanctum','name' => $SendNote]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetNotes]);
+        Permission::create(['guard_name' => 'sanctum','name' => $GetNotesForUser]);
 
 
 
@@ -193,7 +213,11 @@ class RolesAndPermissionsSeeder extends Seeder
             $SendCancellationReason,
             $SetTrackingTrip,
             $GetMyActiveTrip,
-            $GetReasonsCancellationForTrip
+            $GetReasonsCancellationForTrip,
+            $SendRate,
+            $GetRate,
+            $SendNote,
+            $GetAllCancellationReasons
         );
         Role::create(['guard_name' => 'sanctum','name' => $Driver])->givePermissionTo(
             $SendUpdateDriverInfoApplication,
@@ -210,7 +234,11 @@ class RolesAndPermissionsSeeder extends Seeder
             $GetDriverBalance,
             $ChangeStatusDriver,
             $EndTrip,
-            $GetMyActiveTrip
+            $GetMyActiveTrip,
+            $SendRate,
+            $GetRate,
+            $SendNote,
+            $GetAllCancellationReasons
         );
 
     }

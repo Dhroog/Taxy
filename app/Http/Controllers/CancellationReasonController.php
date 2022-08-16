@@ -112,7 +112,11 @@ class CancellationReasonController extends Controller
                         $driver = $trip->driver;
                         $driver->available = true;
                         $driver->save();
-                        $this->sendnotification($driver->user->fcm_token,'Cancellation Trip','Client Cancel your Trip');
+                        $body = array([
+                           'message' => 'Client Cancel your Trip',
+                           'trip_id' => $trip->id
+                        ]);
+                        $this->sendnotification($driver->user->fcm_token,'Trip cancel',json_encode($body));
                     }
                     $trip->Cancellation_reason()->attach($request->cancellation_id);
                     return  $this->returnSuccessMessage();
