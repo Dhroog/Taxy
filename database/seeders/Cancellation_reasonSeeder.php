@@ -15,6 +15,6 @@ class Cancellation_reasonSeeder extends Seeder
      */
     public function run()
     {
-        Cancellation_reason::factory()->count(50)->create();
+        Cancellation_reason::factory()->count(10)->create();
     }
 }
