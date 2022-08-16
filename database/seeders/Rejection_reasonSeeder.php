@@ -15,6 +15,6 @@ class Rejection_reasonSeeder extends Seeder
      */
     public function run()
     {
-        Rejection_reason::factory()->count(50)->create();
+        Rejection_reason::factory()->count(10)->create();
     }
 }

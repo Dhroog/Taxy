@@ -40,11 +40,13 @@ class TripController extends Controller
         ])->orwhere([
             ['user_id', '=', $user->id],
             ['confirmed', '=', true],
-            ['canceled','=',false]
+            ['canceled','=',false],
+            ['ended','=',false]
         ])->orwhere([
             ['user_id', '=', $user->id],
             ['confirmed', '=', false],
-            ['canceled','=',false]
+            ['canceled','=',false],
+            ['ended','=',false]
         ])->get();
         if(!$trips->isEmpty())return $this->returnError('you already have trip');
         $trip = new Trip();
@@ -52,17 +54,15 @@ class TripController extends Controller
             $trip->customer_name = $user->name;
             $trip->customer_phone = $user->phone;
             $trip->customer_image = $user->image;
-
-
-        $trip->s_location = $request->s_location;
-        $trip->e_location = $request->e_location;
-        $trip->s_lat = $request->s_lat;
-        $trip->s_long = $request->s_long;
-        $trip->e_lat = $request->e_lat;
-        $trip->e_long = $request->e_long;
-        $trip->distance = $request->distance;
-        $trip->duration = $request->duration;
-        $trip->save();
+            $trip->s_location = $request->s_location;
+            $trip->e_location = $request->e_location;
+            $trip->s_lat = $request->s_lat;
+            $trip->s_long = $request->s_long;
+            $trip->e_lat = $request->e_lat;
+            $trip->e_long = $request->e_long;
+            $trip->distance = $request->distance;
+            $trip->duration = $request->duration;
+            $trip->save();
 
         $categories = Category::all();
 
@@ -230,6 +230,7 @@ class TripController extends Controller
         $trip = Trip::find($id);
         if(isset($trip))
         {
+            if($trip->ended) return $this->returnError('trip ended');
             if($trip->confirmed)
             {
                 if(!$trip->canceled)
@@ -477,8 +478,9 @@ class TripController extends Controller
     {
         $trip = Trip::find($id);
         if(isset($trip)){
-            //if($reasons->isEmpty()) return $this->returnError();
+
             $reasons = $trip->Cancellation_reason;
+            if($reasons->isEmpty()) return $this->returnError('no reasons for this trip');
             return $this->returnData('Reasons Cancellation',$reasons);
         }else return $this->returnError('trip not found');
     }

@@ -94,6 +94,18 @@ class AuthController extends Controller
                         /// send a response
                         return $this->returnData('logged in successfully', $arry);
                 }else {
+                    if( $user->type == 'driver'){
+                        $arry = array(
+                            'access_token' => $token,
+                            'user_id' => $user->id,
+                            'driver_id' => $user->driver->id,
+                            'type' => $user->type,
+                            'active' => $user->status,
+                            'banned' => $user->banned
+                        );
+                        /// send a response
+                        return $this->returnData('logged in successfully', $arry  );
+                    }
                     $arry = array(
                         'access_token' => $token,
                         'user_id' => $user->id,

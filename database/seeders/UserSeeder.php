@@ -32,6 +32,7 @@ class UserSeeder extends Seeder
                     $user->banned = false;
                     $user->password = Hash::make('admin');
                     $user->status = true;
+                    $user->fcm_token = 'ff1DlaTMTJGB5U1B-upDe0:APA91bFmUAhRQB8rec0siaKZQv8gNMwAF50AuGxqiRjnSSdxBy6x1ESl1ostnA8gnDrnGQ2iM2-I0Cx4dsGMMfHTW66lFAY3s5F_E3jbcMj0hjrtgec_reJVhBXbu-bl46HOk7QNe--c';
                     $user->save();
                     $admin = new Admin();
                     $admin->user_id = $user->id;

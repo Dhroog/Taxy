@@ -133,6 +133,8 @@ class DriverController extends Controller
                     ////Create role
                      $role = Role::findByName('Driver');
                     $user->assignRole($role);
+                    ///remove role customer
+                    $user->removeRole('customer');
                     ////update status DriverJobApplication
                     $DriverJobApplication->status = "accept";
                     $DriverJobApplication->save();
